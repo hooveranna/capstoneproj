@@ -6,6 +6,15 @@ import numpy as np
 class BookTextInterface:
     """Gets text from book based on a book number"""
     def get_text(self, book_no: int) -> str:
+        """ Get raw text from books """
+        pass
+
+    def get_char_names(self, book_text: str) -> np.array:
+        """ Get character names from book """
+        pass
+
+    def get_char_text(book_text, char):
+        """ Get all text from book about character """
         pass
 
 
@@ -39,16 +48,16 @@ class GutenburgBookText(BookTextInterface):
             book_text = book_text[:book_text.find('End of Project Gutenberg')]
         return book_text
 
-def get_char_names(book_text):
-    char_list = re.findall('[A-Z][a-z]* [A-Z][a-z]*', book_text)
-    char_list = np.array(char_list)
-    return np.unique(char_list)
+    def get_char_names(self, book_text):
+        char_list = re.findall('[A-Z][a-z]* [A-Z][a-z]*', book_text)
+        char_list = np.array(char_list)
+        return np.unique(char_list)
 
+    def get_char_sent(self, book_text, char):
+        pattern = '[^.]* %s [^.]*[.]' % char
+        sent_list = re.findall(pattern, book_text)
+        return sent_list
 
-def get_char_sent(book_text, char):
-    pattern = '[^.]* %s [^.]*[.]' % char
-    sent_list = re.findall(pattern, book_text)
-    return sent_list
 
 
 
@@ -56,7 +65,7 @@ def get_char_sent(book_text, char):
 
 if __name__ == "__main__":
     gutenburg = GutenburgBookText()
-    text = gutenburg.get_gutenberg_text(12, "booktext.txt")
-    get_char_names(text)
-    print(get_char_sent(text, 'Alice'))
+    text = gutenburg.get_text(12, "booktext.txt")
+    gutenburg.get_char_names(text)
+    print(gutenburg.get_char_sent(text, 'Alice'))
 

@@ -1,5 +1,5 @@
 
-class CharDatabase:
+class CharDatabaseInterface:
     """ store the personality of character text"""
     def add_char(self, char_personality: dict):
         """ Adds character personality to database"""
@@ -10,7 +10,7 @@ class CharDatabase:
         pass
 
 
-class DiscoveryCharDatabase(CharDatabase):
+class DiscoveryCharDatabase(CharDatabaseInterface):
 
     def add_char(self, char_personality: dict):
         pass
