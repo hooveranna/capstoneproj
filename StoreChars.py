@@ -1,4 +1,6 @@
 import json
+import urllib
+
 from ibm_watson import DiscoveryV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
@@ -59,7 +61,8 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
         return response
 
     def search_char(self, char_personality: dict) -> str:
-        query_string = ''
+        #convert dict to a general query string
+        query_string = urllib.parse.urlencode(char_personality)
         query_results = self.discovery.query(
             environment_id=self.environment_id,
             collection_id=self.collection_id,
@@ -79,8 +82,9 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
 if __name__ == "__main__":
     ddb = DiscoveryCharDatabase("Collection 1")
     this_dict = {
-        "brand": "Ford",
+        "brand": "skd",
         "model": "Mustang",
-        "year": 1964
+        "year": 1977
     }
-    ddb.search_char(this_dict)
+    char_name = ddb.search_char(this_dict)
+    print(char_name)
