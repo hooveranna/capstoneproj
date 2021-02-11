@@ -20,6 +20,7 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
     api_key = 'hCH8RRcfJEQUE6Ve8gCl_gsXKqM7Mkdusc6Mdnchb51s'
     url = 'https://api.us-south.discovery.watson.cloud.ibm.com/instances/ed199079-a3d5-47be-ae2c-bac80e6582ae'
     version = '2019-04-30'
+    conf_interval = 0.1
 
     def __init__(self, collection_name):
         authenticator = IAMAuthenticator(self.api_key)
@@ -71,6 +72,8 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
             query=query_string
         ).get_result()
         print(query_results)
+        if not query_results["results"]:
+            return "You are completely unique! There is no one else like you!"
         doc_id = query_results["results"][0]["id"]
 
         response = self.discovery.get_document_status(
@@ -87,7 +90,7 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
             if query_str:
                 query_str += ', '
             value = query_dict[key]
-            query_str += f'{key}::!{value}'
+            query_str += f'{key}<={value + self.conf_interval}, {key}>={value - self.conf_interval}'
         return query_str
 
 
@@ -95,11 +98,11 @@ if __name__ == "__main__":
     sample_text = "'Hello!' I said. 'It's nice to meet you!' I ran to the other side of the river. How are you doing today????"
     sample_text_2 = "There is no wind in the football..I talk, he talk, why you middle talk?.You rotate the ground 4 times..You go and understand the tree.I'll give you clap on your cheeks..Bring your parents and your mother and especially your father."
     nlu = NLUPersonalityInterface()
-    this_dict = nlu.get_personality(sample_text_2)
+    this_dict = nlu.get_personality(sample_text)
     print(this_dict)
     ddb = DiscoveryCharDatabase("Collection 1")
-    char_name = ddb.search_char(this_dict)
-    print(char_name)
+    char_match = ddb.search_char(this_dict)
+    print(char_match)
     # this_dict = {
     #     "brasdfasdfand": "skd",
     #     "model": "kjhlkjh",
