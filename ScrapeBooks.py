@@ -1,6 +1,8 @@
 import requests
 import re
 import numpy as np
+from StoreChars import DiscoveryCharDatabase
+from TextPersonality import NLUPersonalityInterface
 
 
 class BookTextInterface:
@@ -19,7 +21,7 @@ class BookTextInterface:
 
 
 class GutenburgBookText(BookTextInterface):
-    def get_text(self, book_no, file_name):
+    def get_text(self, book_no):
         url = "https://www.gutenberg.org/files/%d/%d-0.txt" % (book_no, book_no)
         book = requests.get(url)
         book_text = book.content.decode('utf_8')
@@ -59,13 +61,28 @@ class GutenburgBookText(BookTextInterface):
         return sent_list
 
 
-
-
+def add_books_to_database(book_num):
+    pass
 
 
 if __name__ == "__main__":
+    # gutenburg = GutenburgBookText()
+    # text = gutenburg.get_text(12)
+    # gutenburg.get_char_names(text)
+    # print(gutenburg.get_char_sent(text, 'Alice'))
+    # pride and prejudice book - 1342
+    book_num = 1342
     gutenburg = GutenburgBookText()
-    text = gutenburg.get_text(12, "booktext.txt")
-    gutenburg.get_char_names(text)
-    print(gutenburg.get_char_sent(text, 'Alice'))
-
+    nlu = NLUPersonalityInterface()
+    ddb = DiscoveryCharDatabase("Collection 1")
+    text = gutenburg.get_text(book_num)
+    char_names = gutenburg.get_char_names(text)
+    for name in char_names:
+        print(name)
+        first, last = name.split(" ")
+        sent_list = gutenburg.get_char_sent(text, first)
+        char_sents = ''.join(sent_list)
+        if char_sents:
+            char_personality = nlu.get_personality(char_sents)
+            ddb.add_char(name, char_personality)
+            print('entered data into database')

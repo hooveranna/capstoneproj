@@ -1,6 +1,6 @@
 import json
 import urllib
-
+from TextPersonality import NLUPersonalityInterface
 from ibm_watson import DiscoveryV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
@@ -61,13 +61,16 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
         return response
 
     def search_char(self, char_personality: dict) -> str:
-        #convert dict to a general query string
-        query_string = urllib.parse.urlencode(char_personality)
+        # convert dict to a general query string
+        # query_string = urllib.parse.urlencode(char_personality)
+        query_string = self.convert_to_discovery_query_str(char_personality)
+        print(query_string)
         query_results = self.discovery.query(
             environment_id=self.environment_id,
             collection_id=self.collection_id,
             query=query_string
         ).get_result()
+        print(query_results)
         doc_id = query_results["results"][0]["id"]
 
         response = self.discovery.get_document_status(
@@ -78,13 +81,30 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
 
         return response['filename']
 
+    def convert_to_discovery_query_str(self, query_dict: dict):
+        query_str = ''
+        for key in query_dict:
+            if query_str:
+                query_str += ', '
+            value = query_dict[key]
+            query_str += f'{key}::!{value}'
+        return query_str
+
 
 if __name__ == "__main__":
+    sample_text = "'Hello!' I said. 'It's nice to meet you!' I ran to the other side of the river. How are you doing today????"
+    sample_text_2 = "There is no wind in the football..I talk, he talk, why you middle talk?.You rotate the ground 4 times..You go and understand the tree.I'll give you clap on your cheeks..Bring your parents and your mother and especially your father."
+    nlu = NLUPersonalityInterface()
+    this_dict = nlu.get_personality(sample_text_2)
+    print(this_dict)
     ddb = DiscoveryCharDatabase("Collection 1")
-    this_dict = {
-        "brand": "skd",
-        "model": "Mustang",
-        "year": 1977
-    }
     char_name = ddb.search_char(this_dict)
     print(char_name)
+    # this_dict = {
+    #     "brasdfasdfand": "skd",
+    #     "model": "kjhlkjh",
+    #     "year": 1977
+    # }
+    # # ddb.convert_to_discovery_query_str(this_dict)
+    # char_name = ddb.search_char(this_dict)
+    # print(char_name)
