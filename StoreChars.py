@@ -88,15 +88,14 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
         query_str = ''
         for key in query_dict:
             if query_str:
-                query_str += ', '
+                query_str += ' | '
             value = query_dict[key]
             query_str += f'{key}<={value + self.conf_interval}, {key}>={value - self.conf_interval}'
         return query_str
 
 
 if __name__ == "__main__":
-    sample_text = "'Hello!' I said. 'It's nice to meet you!' I ran to the other side of the river. How are you doing today????"
-    sample_text_2 = "There is no wind in the football..I talk, he talk, why you middle talk?.You rotate the ground 4 times..You go and understand the tree.I'll give you clap on your cheeks..Bring your parents and your mother and especially your father."
+    sample_text = "'Hello! It's nice to meet you! I ran to the other side of the river. How are you doing today?"
     nlu = NLUPersonalityInterface()
     this_dict = nlu.get_personality(sample_text)
     print(this_dict)
