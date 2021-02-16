@@ -20,7 +20,7 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
     api_key = 'hCH8RRcfJEQUE6Ve8gCl_gsXKqM7Mkdusc6Mdnchb51s'
     url = 'https://api.us-south.discovery.watson.cloud.ibm.com/instances/ed199079-a3d5-47be-ae2c-bac80e6582ae'
     version = '2019-04-30'
-    conf_interval = 0.1
+    conf_interval = 0.01
 
     def __init__(self, collection_name):
         authenticator = IAMAuthenticator(self.api_key)
@@ -63,7 +63,6 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
 
     def search_char(self, char_personality: dict) -> str:
         # convert dict to a general query string
-        # query_string = urllib.parse.urlencode(char_personality)
         query_string = self.convert_to_discovery_query_str(char_personality)
         print(query_string)
         query_results = self.discovery.query(
@@ -90,12 +89,13 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
             if query_str:
                 query_str += ' | '
             value = query_dict[key]
-            query_str += f'{key}<={value + self.conf_interval}, {key}>={value - self.conf_interval}'
+            query_str += f'{key}<={value + self.conf_interval}, {key}>={max(value - self.conf_interval, 0.0001)}'
         return query_str
 
 
 if __name__ == "__main__":
-    sample_text = "'Hello! It's nice to meet you! I ran to the other side of the river. How are you doing today?"
+    sample_text = "This is awful! I can't believe you did this to me? I was looking forward to this. How could you? You're disgusting!" # ==> outputs George Wickham
+    sample_text_2 = "Oh, I'm quite downhearted that my brother is not here right now... However, I would love that! If you are talking about that! Then I must be part of the conversation! I sure that I would enjoy that very much! This would be delightful! " # ==> charlotte lucas
     nlu = NLUPersonalityInterface()
     this_dict = nlu.get_personality(sample_text)
     print(this_dict)
