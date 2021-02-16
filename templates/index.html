@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block header %}
-  <h1>{% block title %}Minimum Viable Product Home{% endblock %}</h1>
+  <h1>{% block title %}Home{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -8,9 +8,10 @@
     <label for="name">Name</label>
     <input name="name" id="name" required>
     <br>
-    <label for="usertext">Enter Your Speech:</label>
+    <label for="usertext">Enter Your Text:</label>
     <input style="width:400px;" name="usertext" id="usertext" required>
     <br>
+    <!--- haven't inplemented yet
     <input type="radio" id="similar" name="testType" value="similar" checked>
     <label for="similar">Most Similar To</label><br>
     <input type="radio" id="different" name="testType" value="different">
@@ -18,6 +19,7 @@
     <input type="radio" id="friend" name="testType" value="friend">
     <label for="friend">Most Likely to Become Friends With</label>
     <br>
+    --->
     <input type="submit" value="Submit">
   </form>
 {% endblock %}
