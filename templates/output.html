@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 {% block header %}
-  <h1>{% block title %}Mockup Output{% endblock %}</h1>
+  <h1>{% block title %}Minimum Viable Product Output{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
   <div>
-    <P>You, Bob, have been matched with ....</p>
-    <h1>Sherlock Holmes!!!!!</h1>
+    <P>You, {{username}}, have been matched with ....</p>
+    <h1>{{character_name}}</h1>
+    <!-- haven't implemented
     <img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Sherlock_Holmes_Portrait_Paget.jpg" alt="Sherlock">
+    -->
   </div>
+<!-- haven't implemented
   <div>
     <P>Here are some quotes from this character:</p>
     <ul>
@@ -33,6 +36,7 @@
     <li>Marius Pontmercy</li>
   </ol>
   </div>
+  -->
 {% endblock %}
 
 </html>
