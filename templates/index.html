@@ -4,13 +4,16 @@
 {% endblock %}
 
 {% block content %}
+<div class="container pt-3">
   <form method="post">
-    <label for="name">Name</label>
-    <input name="name" id="name" required>
-    <br>
-    <label for="usertext">Enter Your Text:</label>
-    <input style="width:400px;" name="usertext" id="usertext" required>
-    <br>
+    <div class="form-group">
+      <label for="name">Name: </label>
+      <input name="name" id="name" placeholder="Enter your name" required>
+    </div>
+    <div class="form-group">
+      <label for="usertext">Enter Your Text:</label>
+      <textarea class="form-control" name="usertext" id="usertext" rows="5" cols="50" placeholder="Enter the text you would like to match" required></textarea>
+    </div>
     <!--- haven't inplemented yet
     <input type="radio" id="similar" name="testType" value="similar" checked>
     <label for="similar">Most Similar To</label><br>
@@ -20,8 +23,9 @@
     <label for="friend">Most Likely to Become Friends With</label>
     <br>
     --->
-    <input type="submit" value="Submit">
+    <input type="submit" class="btn btn-primary btn-lg" value="Match me!">
   </form>
+</div>
 {% endblock %}
 
 </html>
