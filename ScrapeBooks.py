@@ -1,9 +1,9 @@
 import requests
 import re
 import numpy as np
+import nltk
 from StoreChars import DiscoveryCharDatabase
 from TextPersonality import NLUPersonalityInterface
-
 
 class BookTextInterface:
     """Gets text from book based on a book number"""
@@ -18,7 +18,6 @@ class BookTextInterface:
     def get_char_text(book_text, char):
         """ Get all text from book about character """
         pass
-
 
 class GutenburgBookText(BookTextInterface):
     def get_text(self, book_no):
@@ -50,10 +49,27 @@ class GutenburgBookText(BookTextInterface):
             book_text = book_text[:book_text.find('End of Project Gutenberg')]
         return book_text
 
-    def get_char_names(self, book_text):
-        char_list = re.findall('(?<![?.!”] )[A-Z][a-z]+ [A-Z][a-z]+', book_text)
-        char_list = np.array(char_list)
-        return np.unique(char_list)
+    def get_char_names(book_text):
+      char_list = []
+      for sent in nltk.sent_tokenize(book_text):
+        for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
+          if hasattr(chunk, 'label') and chunk.label() == "PERSON": 
+            if len(chunk) == 1:
+              char_list.append(chunk[0][0])
+            elif len(chunk) > 1:
+              tempName = chunk[0][0]
+              for i in range(1, len(chunk)):
+                tempName = tempName + " " + chunk[i][0]
+              char_list.append(tempName)
+
+      char_list = np.unique(np.array(char_list))
+      remove = []
+      for i in range(char_list.shape[0]):
+        for j in range(i+1,char_list.shape[0]):
+          if char_list[i] in char_list[j]:
+            remove.append(j)   
+        
+      return np.delete(char_list,remove)
 
     def get_char_sent(self, book_text, char):
         pattern = '[^.]* %s [^.]*[.]' % char
