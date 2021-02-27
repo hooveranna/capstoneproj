@@ -29,5 +29,8 @@ def submit(username, usertext):
     char_match = ddb.search_char(this_dict)
     return render_template('output.html', username=username, character_name=char_match)
 
+@app.route("/about-us")
+def about(name=None):
+    return render_template('about.html', name=name)
 
 app.run()
