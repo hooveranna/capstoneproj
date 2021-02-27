@@ -1,5 +1,4 @@
 import json
-import urllib
 from TextPersonality import NLUPersonalityInterface
 from ibm_watson import DiscoveryV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
@@ -48,7 +47,7 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
         return 0
 
     def add_char(self, char_name: str, char_info: dict):
-        file_name = 'test.json'
+        file_name = 'add_char.json'
         with open(file_name, 'w') as fp:
             json.dump(char_info, fp)
         with open(file_name) as file_info:

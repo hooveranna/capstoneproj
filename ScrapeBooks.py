@@ -49,27 +49,27 @@ class GutenburgBookText(BookTextInterface):
             book_text = book_text[:book_text.find('End of Project Gutenberg')]
         return book_text
 
-    def get_char_names(book_text):
-      char_list = []
-      for sent in nltk.sent_tokenize(book_text):
-        for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
-          if hasattr(chunk, 'label') and chunk.label() == "PERSON": 
-            if len(chunk) == 1:
-              char_list.append(chunk[0][0])
-            elif len(chunk) > 1:
-              tempName = chunk[0][0]
-              for i in range(1, len(chunk)):
-                tempName = tempName + " " + chunk[i][0]
-              char_list.append(tempName)
+    def get_char_names(self, book_text):
+        char_list = []
+        for sent in nltk.sent_tokenize(book_text):
+            for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
+                if hasattr(chunk, 'label') and chunk.label() == "PERSON":
+                    if len(chunk) == 1:
+                        char_list.append(chunk[0][0])
+                    elif len(chunk) > 1:
+                        temp_name = chunk[0][0]
+                        for i in range(1, len(chunk)):
+                            temp_name = temp_name + " " + chunk[i][0]
+                        char_list.append(temp_name)
 
-      char_list = np.unique(np.array(char_list))
-      remove = []
-      for i in range(char_list.shape[0]):
-        for j in range(i+1,char_list.shape[0]):
-          if char_list[i] in char_list[j]:
-            remove.append(j)   
-        
-      return np.delete(char_list,remove)
+        char_list = np.unique(np.array(char_list))
+        remove = []
+        for i in range(char_list.shape[0]):
+            for j in range(i+1, char_list.shape[0]):
+                if char_list[i] in char_list[j]:
+                    remove.append(j)
+
+        return np.delete(char_list, remove)
 
     def get_char_sent(self, book_text, char):
         pattern = '[^.]* %s [^.]*[.]' % char
@@ -82,22 +82,22 @@ if __name__ == "__main__":
     # gutenburg.get_char_names(text)
     # print(gutenburg.get_char_sent(text, 'Alice'))
     # pride and prejudice book - 1342, study in scarlet - 244
-    book_num = 244
+    book_num = 1342
     gutenburg = GutenburgBookText()
     nlu = NLUPersonalityInterface()
     ddb = DiscoveryCharDatabase("Collection 1")
     text = gutenburg.get_text(book_num)
     char_names = gutenburg.get_char_names(text)
-    # print(char_names)
-    # print(len(char_names))
+    print(char_names)
+    print(len(char_names))
     # print(gutenburg.get_char_sent(text, 'Jefferson Hope'))
-    for name in char_names:
-        print(name)
-        first, last = name.split(" ")
-        sent_list = gutenburg.get_char_sent(text, first)
-        sent_list += gutenburg.get_char_sent(text, last)
-        char_sents = ''.join(sent_list)
-        if char_sents:
-            char_personality = nlu.get_personality(char_sents)
-            # ddb.add_char(name, char_personality)
-            print(char_personality)
+    # for name in char_names:
+    #     print(name)
+    #     first, last = name.split(" ")
+    #     sent_list = gutenburg.get_char_sent(text, first)
+    #     sent_list += gutenburg.get_char_sent(text, last)
+    #     char_sents = ''.join(sent_list)
+    #     if char_sents:
+    #         char_personality = nlu.get_personality(char_sents)
+    #         # ddb.add_char(name, char_personality)
+    #         print(char_personality)
