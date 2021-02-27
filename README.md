@@ -8,3 +8,6 @@ Need to install packages:
 * ibm_watson
 * ibm_cloud_sdk_core
 * json
+* pandas
+* plotly
+* kaleido

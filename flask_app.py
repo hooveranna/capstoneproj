@@ -6,6 +6,7 @@ from flask import (
 )
 from TextPersonality import NLUPersonalityInterface
 from StoreChars import DiscoveryCharDatabase
+from chart import create_figure
 
 app = Flask(__name__)
 # run_with_ngrok(app)   # starts ngrok when the app is run
@@ -22,12 +23,14 @@ def home(name=None):
 
 @app.route("/submit/<username>/<usertext>")
 def submit(username, usertext):
+    file_name = "test_file.jpeg"
     nlu = NLUPersonalityInterface()
     this_dict = nlu.get_personality(usertext)
+    create_figure(this_dict, file_name)
     # add condition to handle nlu error
     ddb = DiscoveryCharDatabase("Collection 1")
     char_match = ddb.search_char(this_dict)
-    return render_template('output.html', username=username, character_name=char_match)
+    return render_template('output.html', username=username, character_name=char_match, file_name=file_name)
 
 @app.route("/about-us")
 def about(name=None):
