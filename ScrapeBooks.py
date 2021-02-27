@@ -49,27 +49,26 @@ class GutenburgBookText(BookTextInterface):
             book_text = book_text[:book_text.find('End of Project Gutenberg')]
         return book_text
 
-    def get_char_names(book_text):
-      char_list = []
-      for sent in nltk.sent_tokenize(book_text):
-        for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
-          if hasattr(chunk, 'label') and chunk.label() == "PERSON": 
-            if len(chunk) == 1:
-              char_list.append(chunk[0][0])
-            elif len(chunk) > 1:
-              tempName = chunk[0][0]
-              for i in range(1, len(chunk)):
-                tempName = tempName + " " + chunk[i][0]
-              char_list.append(tempName)
-
-      char_list = np.unique(np.array(char_list))
-      remove = []
-      for i in range(char_list.shape[0]):
-        for j in range(i+1,char_list.shape[0]):
-          if char_list[i] in char_list[j]:
-            remove.append(j)   
+    def get_char_names(self,book_text):
+        twos = []
+        threes = []
+        for sent in nltk.sent_tokenize(book_text):
+            for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
+                if hasattr(chunk, 'label') and chunk.label() == "PERSON": 
+                    if len(chunk) == 2 and chunk[0][0] != 'Mr.'and chunk[0][0] != 'Mrs.'and chunk[0][0] != 'Ms.'and chunk[0][0] != 'Dr.'and chunk[0][0] != 'Mister'and chunk[0][0] != 'Lady'and chunk[0][0] != 'Miss'and chunk[0][0] != 'Poor'and chunk[0][0] != 'Did'and chunk[0][0] != 'Captain'and chunk[0][0] != 'Colonel'and chunk[0][0] != 'Could'and chunk[0][0] != 'Madame'and chunk[0][0] != 'Doctor'and chunk[0][0] != 'Sir'and chunk[0][0] != 'Brother'and chunk[0][0] != 'Sister'and chunk[0][0] != 'Does'and chunk[0][0] != 'Part'and chunk[0][0] != 'Good'and chunk[1][0] and chunk[0][0] != 'Young' and chunk[0][0] != 'Old'!= 'Town' and chunk[1][0] != 'City' and chunk[1][0] != 'Park' and chunk[1][0] != 'Place' and chunk[0][0] != 'Street' and chunk[1][0] != 'Street' and chunk[1][0] != 'Bridge' and chunk[1][0] != 'Station' and chunk[1][0] != 'Road'and chunk[1][0] != 'Lake'and chunk[1][0] != 'Pond'and chunk[1][0] != 'Sea' and chunk[1][0] != 'Terrace'and chunk[1][0] != 'House'and chunk[1][0] != 'Lodge'and chunk[1][0] != 'Woods'and chunk[1][0] != 'Mount'and chunk[1][0] != 'Dale'and chunk[1][0] != 'Gardens'and chunk[1][0] != 'Court'and len(chunk[1][0]) > 2:
+                        twos.append(chunk[0][0] + " " + chunk[1][0])
+                    elif len(chunk) == 3 and chunk[0][0] != 'Did'and chunk[0][0] != 'Could'and chunk[2][0] != 'City'and len(chunk[1][0]) > 2:
+                        threes.append(chunk[0][0] + " " + chunk[1][0] + " " + chunk[2][0])
+ 
+        twos = np.unique(np.array(twos))
+        threes = np.unique(np.array(threes))
+        remove = []
+        for i in range(twos.shape[0]):
+            for j in range(threes.shape[0]):
+                if twos[i] in threes[j]:
+                    remove.append(j)   
         
-      return np.delete(char_list,remove)
+        return np.append(twos, np.delete(threes,remove))
 
     def get_char_sent(self, book_text, char):
         pattern = '[^.]* %s [^.]*[.]' % char
