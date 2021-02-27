@@ -1,8 +1,11 @@
 import plotly.express as px
 import pandas as pd
+import os
 # import plotly.graph_objects as go
 
 def create_figure(info_dict, file_name):
+    if not os.path.exists("static"):
+        os.mkdir("static")
     path = "static/%s" % file_name
     keys = info_dict.keys()
     values = info_dict.values()
