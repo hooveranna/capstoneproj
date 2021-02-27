@@ -9,6 +9,7 @@ from StoreChars import DiscoveryCharDatabase
 from chart import create_figure
 
 app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 # run_with_ngrok(app)   # starts ngrok when the app is run
 
 

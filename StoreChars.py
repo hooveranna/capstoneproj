@@ -63,13 +63,13 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
     def search_char(self, char_personality: dict) -> str:
         # convert dict to a general query string
         query_string = self.convert_to_discovery_query_str(char_personality)
-        print(query_string)
+        # print(query_string)
         query_results = self.discovery.query(
             environment_id=self.environment_id,
             collection_id=self.collection_id,
             query=query_string
         ).get_result()
-        print(query_results)
+        # print(query_results)
         if not query_results["results"]:
             return "You are completely unique! There is no one else like you!"
         doc_id = query_results["results"][0]["id"]

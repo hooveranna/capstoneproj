@@ -15,7 +15,14 @@ def create_figure(info_dict, file_name):
     ))
     fig = px.line_polar(df, r='r', theta='theta', line_close=True, template="plotly_dark")
     fig.update_traces(fill='toself')
-    #fig.show()
+    fig.update_layout(
+            polar=dict(
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, 1]
+                )),
+            showlegend=False
+        )
     fig.write_image(path)
     return 0
     # using plotly graph objects
