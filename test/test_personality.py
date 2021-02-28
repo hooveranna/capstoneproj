@@ -1,9 +1,4 @@
-import json
-import urllib
-from TextPersonality import NLUPersonalityInterface
-from ibm_watson import DiscoveryV1
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-
+#test case
 def test_persionality():
     #nlu = NLUPersonalityInterface()
     # nlu.get_personality(
