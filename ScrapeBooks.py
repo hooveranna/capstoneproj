@@ -98,5 +98,7 @@ if __name__ == "__main__":
         char_sents = ''.join(sent_list)
         if char_sents:
             char_personality = nlu.get_personality(char_sents)
-            # ddb.add_char(name, char_personality)
-            print(char_personality)
+            full_dict = dict(char_personality[0])
+            full_dict.update(char_personality[1])
+            # ddb.add_char(name, full_dict)
+            print(full_dict)

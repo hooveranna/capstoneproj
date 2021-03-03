@@ -97,9 +97,11 @@ if __name__ == "__main__":
     sample_text_2 = "Oh, I'm quite downhearted that my brother is not here right now... However, I would love that! If you are talking about that! Then I must be part of the conversation! I sure that I would enjoy that very much! This would be delightful! " # ==> charlotte lucas
     nlu = NLUPersonalityInterface()
     this_dict = nlu.get_personality(sample_text)
-    print(this_dict)
+    full_dict = dict(this_dict[0])
+    full_dict.update(this_dict[1])
+    print(full_dict)
     ddb = DiscoveryCharDatabase("Collection 1")
-    char_match = ddb.search_char(this_dict)
+    char_match = ddb.search_char(full_dict)
     print(char_match)
     # this_dict = {
     #     "brasdfasdfand": "skd",

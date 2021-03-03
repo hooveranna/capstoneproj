@@ -25,12 +25,16 @@ def home(name=None):
 @app.route("/submit/<username>/<usertext>")
 def submit(username, usertext):
     file_name = "test_file.jpeg"
+    file_name2 = "test_file2.jpeg"
     nlu = NLUPersonalityInterface()
     this_dict = nlu.get_personality(usertext)
-    create_figure(this_dict, file_name)
+    create_figure(this_dict[0], file_name)
+    create_figure(this_dict[1], file_name2)
     # add condition to handle nlu error
     ddb = DiscoveryCharDatabase("Collection 1")
-    char_match = ddb.search_char(this_dict)
+    full_dict = dict(this_dict[0])
+    full_dict.update(this_dict[1])
+    char_match = ddb.search_char(full_dict)
     return render_template('output.html', username=username, character_name=char_match, file_name=file_name)
 
 @app.route("/about-us")
