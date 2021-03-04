@@ -5,6 +5,7 @@ import nltk
 from StoreChars import DiscoveryCharDatabase
 from TextPersonality import NLUPersonalityInterface
 
+
 class BookTextInterface:
     """Gets text from book based on a book number"""
     def get_text(self, book_no: int) -> str:
@@ -18,6 +19,7 @@ class BookTextInterface:
     def get_char_text(book_text, char):
         """ Get all text from book about character """
         pass
+
 
 class GutenburgBookText(BookTextInterface):
     def get_text(self, book_no):
@@ -74,6 +76,7 @@ class GutenburgBookText(BookTextInterface):
         pattern = '[^.]* %s [^.]*[.]' % char
         sent_list = re.findall(pattern, book_text)
         return sent_list
+
 
 if __name__ == "__main__":
     # gutenburg = GutenburgBookText()

@@ -30,15 +30,19 @@ def submit(username, usertext):
     this_dict = nlu.get_personality(usertext)
     create_figure(this_dict[0], file_name)
     create_figure(this_dict[1], file_name2)
+    if not this_dict[1]:
+        file_name2 = None
     # add condition to handle nlu error
     ddb = DiscoveryCharDatabase("Collection 1")
     full_dict = dict(this_dict[0])
     full_dict.update(this_dict[1])
     char_match = ddb.search_char(full_dict)
-    return render_template('output.html', username=username, character_name=char_match, file_name=file_name)
+    return render_template('output.html', username=username, character_name=char_match, file_name=file_name, file_name2=file_name2)
+
 
 @app.route("/about-us")
 def about(name=None):
     return render_template('about.html', name=name)
+
 
 app.run()

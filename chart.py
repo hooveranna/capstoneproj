@@ -3,6 +3,7 @@ import pandas as pd
 import os
 # import plotly.graph_objects as go
 
+
 def create_figure(info_dict, file_name):
     if not os.path.exists("static"):
         os.mkdir("static")
