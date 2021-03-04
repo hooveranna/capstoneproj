@@ -1,7 +1,5 @@
 import pytest
 from TextPersonality import NLUPersonalityInterface
-from StoreChars import DiscoveryCharDatabase
-from ScrapeBooks import BookTextInterface
 from ScrapeBooks import GutenburgBookText
 
 #test case persoanlity
@@ -49,4 +47,4 @@ def test_get_char_names_valid():
     gutenburg = GutenburgBookText()
     book_num = 244
     book_text = gutenburg.get_text(book_num)
-    assert gutenburg.get_char_names(book_text).size != 0, "the name list should not  be null"
+    assert gutenburg.get_char_names(book_text).size != 0, "the name list should not be null"
