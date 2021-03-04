@@ -39,9 +39,7 @@ class NLUPersonalityInterface:
         personality_dict = emotionResponse["emotion"]["document"]["emotion"]
         for i in range(len(conceptResponse["concepts"])):
             if " " in conceptResponse["concepts"][i]["text"]:
-                temp = list(conceptResponse["concepts"][i]["text"])
-                temp[conceptResponse["concepts"][i]["text"].index(" ")] = "_"
-                concept_dict[''.join(temp)] = conceptResponse["concepts"][i]["relevance"]
+                 concept_dict[conceptResponse["concepts"][i]["text"].replace(" ", "_")] = conceptResponse["concepts"][i]["relevance"]
             else:
                 concept_dict[conceptResponse["concepts"][i]["text"]] = conceptResponse["concepts"][i]["relevance"]
 
