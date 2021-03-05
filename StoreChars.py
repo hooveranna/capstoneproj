@@ -1,5 +1,4 @@
 import json
-import urllib
 from TextPersonality import NLUPersonalityInterface
 from ibm_watson import DiscoveryV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
@@ -48,7 +47,7 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
         return 0
 
     def add_char(self, char_name: str, char_info: dict):
-        file_name = 'test.json'
+        file_name = 'add_char.json'
         with open(file_name, 'w') as fp:
             json.dump(char_info, fp)
         with open(file_name) as file_info:
@@ -64,13 +63,13 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
     def search_char(self, char_personality: dict) -> str:
         # convert dict to a general query string
         query_string = self.convert_to_discovery_query_str(char_personality)
-        print(query_string)
+        # print(query_string)
         query_results = self.discovery.query(
             environment_id=self.environment_id,
             collection_id=self.collection_id,
             query=query_string
         ).get_result()
-        print(query_results)
+        # print(query_results)
         if not query_results["results"]:
             return "You are completely unique! There is no one else like you!"
         doc_id = query_results["results"][0]["id"]
@@ -98,9 +97,11 @@ if __name__ == "__main__":
     sample_text_2 = "Oh, I'm quite downhearted that my brother is not here right now... However, I would love that! If you are talking about that! Then I must be part of the conversation! I sure that I would enjoy that very much! This would be delightful! " # ==> charlotte lucas
     nlu = NLUPersonalityInterface()
     this_dict = nlu.get_personality(sample_text)
-    print(this_dict)
+    full_dict = dict(this_dict[0])
+    full_dict.update(this_dict[1])
+    print(full_dict)
     ddb = DiscoveryCharDatabase("Collection 1")
-    char_match = ddb.search_char(this_dict)
+    char_match = ddb.search_char(full_dict)
     print(char_match)
     # this_dict = {
     #     "brasdfasdfand": "skd",

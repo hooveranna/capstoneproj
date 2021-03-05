@@ -1,7 +1,6 @@
-import json
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-from ibm_watson.natural_language_understanding_v1 import Features, EmotionOptions
+from ibm_watson.natural_language_understanding_v1 import Features, EmotionOptions, ConceptsOptions
 
 
 class PersonalityInterface:
@@ -24,13 +23,27 @@ class NLUPersonalityInterface:
         self.natural_language_understanding.set_service_url(self.url)
 
     def get_personality(self, text):
-        response = self.natural_language_understanding.analyze(
+        numberConcepts = 5
+        concept_dict = {}
+
+        emotionResponse = self.natural_language_understanding.analyze(
             text=text,
             features=Features(
                 emotion=EmotionOptions(document=True))).get_result()
 
-        personality_dict = response["emotion"]["document"]["emotion"]
-        return personality_dict
+        conceptResponse = self.natural_language_understanding.analyze(
+            text=text,
+            features=Features(
+                concepts=ConceptsOptions(limit=numberConcepts))).get_result()
+
+        personality_dict = emotionResponse["emotion"]["document"]["emotion"]
+        for i in range(len(conceptResponse["concepts"])):
+            if " " in conceptResponse["concepts"][i]["text"]:
+                 concept_dict[conceptResponse["concepts"][i]["text"].replace(" ", "_")] = conceptResponse["concepts"][i]["relevance"]
+            else:
+                concept_dict[conceptResponse["concepts"][i]["text"]] = conceptResponse["concepts"][i]["relevance"]
+
+        return [personality_dict, concept_dict]
 
 
 if __name__ == "__main__":
