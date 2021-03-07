@@ -23,7 +23,14 @@
     <label for="friend">Most Likely to Become Friends With</label>
     <br>
     --->
-    <input type="submit" class="btn btn-primary btn-lg" value="Match me!">
+    <input id="matchMe" type="submit" class="btn btn-primary btn-lg" value="Match me!" onclick="showLoading();">
   </form>
+  <script type="text/javascript">
+
+  function showLoading() {
+    document.getElementById('matchMe').value = "Loading...";
+  }
+  </script>
+  <noscript>Sorry, your browser does not support JavaScript!</noscript>
 </div>
 {% endblock %}

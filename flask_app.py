@@ -8,6 +8,7 @@ from TextPersonality import NLUPersonalityInterface
 from StoreChars import DiscoveryCharDatabase
 from werkzeug.exceptions import InternalServerError
 from chart import create_figure
+import time
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
