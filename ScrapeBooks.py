@@ -102,7 +102,7 @@ if __name__ == "__main__":
     nlu = NLUPersonalityInterface()
     ddb = DiscoveryCharDatabase("Collection 1")
     text = gutenburg.get_text(book_num)
-    print(gutenburg.get_title(book_num))
+    book_title = gutenburg.get_title(book_num)
     char_names = gutenburg.get_char_names(text)
     print(char_names)
     print(len(char_names))
@@ -114,6 +114,7 @@ if __name__ == "__main__":
         sent_list = gutenburg.get_char_sent(text, first)
         sent_list += gutenburg.get_char_sent(text, last)
         char_sents = ''.join(sent_list)
+        name = name + " from " + book_title
         if char_sents:
             char_personality = nlu.get_personality(char_sents)
             full_dict = dict(char_personality[0])
