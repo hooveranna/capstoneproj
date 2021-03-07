@@ -9,22 +9,53 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Sherlock_Holmes_Portrait_Paget.jpg" alt="Sherlock">
     -->
   </div>
+{% if concepts %}
+<div>
+  You had these concepts in your text:
+  <ul>
+    {% for concept in concepts %}
+        <li>{{concept.replace("_"," ")}}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% if char_concepts %}
+<div>
+  The character you matched with had these concepts in their text:
+  <ul>
+    {% for concept in char_concepts %}
+        <li>{{concept.replace("_"," ")}}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
 <div class="row">
   <div class="col card">
     <div class="card-body">
-      <h4 class="card-title">Emotions Chart</h4>
+      <h4 class="card-title">Your Emotions Chart</h4>
     </div>
-    <img class="card-img-bottom" src="{{url_for('static',filename=file_name)}}" alt="Emotions chart image">
+    <img class="card-img-bottom" src="{{url_for('static',filename=file_name)}}" alt="Your Emotions chart image">
   </div>
-  {% if file_name2 %}
   <div class="col card">
     <div class="card-body">
-      <h4 class="card-title">Concepts Chart</h4>
+      <h4 class="card-title">Character's Emotions Chart</h4>
     </div>
-    <img class="card-img-bottom" src="{{url_for('static',filename=file_name2)}}" alt="Concepts chart image">
+    <img class="card-img-bottom" src="{{url_for('static',filename=file_name3)}}" alt="Character's Emotions chart image">
   </div>
-  {% endif %}
 </div>
+<div class="container">
+  <a class="btn btn-primary" href="{{ url_for('home') }}" role="button">Match me again!</a>
+</div>
+<!--{% if file_name2 %}-->
+<!--<div class="row">-->
+<!--  <div class="col card">-->
+<!--    <div class="card-body">-->
+<!--      <h4 class="card-title">Concepts Chart</h4>-->
+<!--    </div>-->
+<!--    <img class="card-img-bottom" src="{{url_for('static',filename=file_name2)}}" alt="Concepts chart image">-->
+<!--  </div>-->
+<!--</div>-->
+<!--{% endif %}-->
 <!-- haven't implemented
   <div>
     <P>Here are some quotes from this character:</p>
