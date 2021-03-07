@@ -114,10 +114,10 @@ if __name__ == "__main__":
         sent_list = gutenburg.get_char_sent(text, first)
         sent_list += gutenburg.get_char_sent(text, last)
         char_sents = ''.join(sent_list)
-        name = name + " from " + book_title
         if char_sents:
             char_personality = nlu.get_personality(char_sents)
             full_dict = dict(char_personality[0])
             full_dict.update(char_personality[1])
+            full_dict["title"] = book_title
             # ddb.add_char(name, full_dict)
             print(full_dict)
