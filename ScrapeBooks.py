@@ -4,6 +4,7 @@ import numpy as np
 import nltk
 from StoreChars import DiscoveryCharDatabase
 from TextPersonality import NLUPersonalityInterface
+from bs4 import BeautifulSoup
 
 
 class BookTextInterface:
@@ -16,8 +17,12 @@ class BookTextInterface:
         """ Get character names from book """
         pass
 
-    def get_char_text(book_text, char):
+    def get_char_text(self, book_text, char):
         """ Get all text from book about character """
+        pass
+
+    def get_title(self, book_no: int):
+        """ returns the title of a book given a certain text """
         pass
 
 
@@ -72,7 +77,15 @@ class GutenburgBookText(BookTextInterface):
 
         return np.append(twos, np.delete(threes,remove))
 
-    def get_char_sent(self, book_text, char):
+    def get_title(self, book_no):
+        url = 'http://www.gutenberg.org/files/%d/%d-h/%d-h.htm' % (book_no, book_no, book_no)
+        source = requests.get(url).text
+        soup = BeautifulSoup(source, 'html.parser')
+        h1_tag = soup.find('h1').getText()
+        title = re.sub(r'[^\w\s]', '', h1_tag)
+        return title.title()
+
+    def get_char_text(self, book_text, char):
         pattern = '[^.]* %s [^.]*[.]' % char
         sent_list = re.findall(pattern, book_text)
         return sent_list
@@ -89,12 +102,14 @@ if __name__ == "__main__":
     nlu = NLUPersonalityInterface()
     ddb = DiscoveryCharDatabase("Collection 1")
     text = gutenburg.get_text(book_num)
+    print(gutenburg.get_title(book_num))
     char_names = gutenburg.get_char_names(text)
-    # print(char_names)
-    # print(len(char_names))
-    # print(gutenburg.get_char_sent(text, 'Jefferson Hope'))
+    print(char_names)
+    print(len(char_names))
+    print(gutenburg.get_char_sent(text, 'Jefferson Hope'))
     for name in char_names:
         print(name)
+        name = name.title()
         first, last = name.split(" ")
         sent_list = gutenburg.get_char_sent(text, first)
         sent_list += gutenburg.get_char_sent(text, last)
