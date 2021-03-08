@@ -15,6 +15,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 
 # run_with_ngrok(app)   # starts ngrok when the app is run
 
+
 @app.route("/", methods=('GET', 'POST'))
 def home(name=None):
     if request.method == 'POST':
@@ -22,6 +23,7 @@ def home(name=None):
         usertext = request.form['usertext']
         return redirect(url_for('submit', username=username, usertext=usertext))
     return render_template('index.html', name=name)
+
 
 @app.route("/submit/<username>/<usertext>")
 def submit(username, usertext):
