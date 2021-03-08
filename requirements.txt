@@ -1,0 +1,8 @@
+numpy~=1.19.5
+flask~=1.1.2
+ibm_watson == 5.1.0
+ibm-cloud-sdk-core == 3.5.1
+
+
+pytest~=6.2.2
+requests~=2.25.1
