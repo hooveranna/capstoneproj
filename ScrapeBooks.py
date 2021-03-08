@@ -83,6 +83,8 @@ class GutenburgBookText(BookTextInterface):
         soup = BeautifulSoup(source, 'html.parser')
         h1_tag = soup.find('h1').getText()
         title = re.sub(r'[^\w\s]', '', h1_tag)
+        title = title.replace('\r', '')
+        title = re.sub("\s+", ' ', title)
         return title.title()
 
     def get_char_text(self, book_text, char):
@@ -97,7 +99,7 @@ if __name__ == "__main__":
     # gutenburg.get_char_names(text)
     # print(gutenburg.get_char_sent(text, 'Alice'))
     # pride and prejudice book - 1342, study in scarlet - 244, the odyssey - 1727
-    book_num = 244
+    book_num = 1727
     gutenburg = GutenburgBookText()
     nlu = NLUPersonalityInterface()
     ddb = DiscoveryCharDatabase("Collection 1")
