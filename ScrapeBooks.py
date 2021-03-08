@@ -96,7 +96,7 @@ if __name__ == "__main__":
     # text = gutenburg.get_text(12)
     # gutenburg.get_char_names(text)
     # print(gutenburg.get_char_sent(text, 'Alice'))
-    # pride and prejudice book - 1342, study in scarlet - 244
+    # pride and prejudice book - 1342, study in scarlet - 244, the odessey -
     book_num = 244
     gutenburg = GutenburgBookText()
     nlu = NLUPersonalityInterface()
@@ -106,18 +106,18 @@ if __name__ == "__main__":
     char_names = gutenburg.get_char_names(text)
     print(char_names)
     print(len(char_names))
-    print(gutenburg.get_char_sent(text, 'Jefferson Hope'))
+    print(gutenburg.get_char_text(text, 'Jefferson Hope'))
     for name in char_names:
         print(name)
         name = name.title()
         first, last = name.split(" ")
-        sent_list = gutenburg.get_char_sent(text, first)
-        sent_list += gutenburg.get_char_sent(text, last)
+        sent_list = gutenburg.get_char_text(text, first)
+        sent_list += gutenburg.get_char_text(text, last)
         char_sents = ''.join(sent_list)
         if char_sents:
             char_personality = nlu.get_personality(char_sents)
             full_dict = dict(char_personality[0])
             full_dict.update(char_personality[1])
             full_dict["title"] = book_title
-            # ddb.add_char(name, full_dict)
+            ddb.add_char(name, full_dict)
             print(full_dict)
