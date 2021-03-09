@@ -40,18 +40,17 @@ def submit(username, usertext):
     full_dict = dict(this_dict[0])
     full_dict.update(this_dict[1])
     char_match, personality = ddb.search_char(full_dict)
-    book_title = personality.pop("title", "Unknown")
-    emotions, concepts = get_emotions_from_dict(personality)
-    create_figure(emotions, file_name3);
     if personality:
-        sentences = personality.get("sentences").split('.')
-        sentences.pop()
+        sentences = personality.pop("sentences")
         if len(sentences) < 3:
             sentences = random.sample(sentences,1)
         else:
             sentences = random.sample(sentences,3)
     else:
         sentences = ["There are none"]
+    book_title = personality.pop("title", "Unknown")
+    emotions, concepts = get_emotions_from_dict(personality)
+    create_figure(emotions, file_name3);
     # create_figure(personality, file_name4)
     return render_template('output.html', username=username, character_name=char_match, file_name=file_name, concepts=this_dict[1].keys(), file_name3=file_name3, char_concepts=personality.keys(), title=book_title, sentences=sentences)
 
