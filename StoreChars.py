@@ -10,8 +10,8 @@ class CharDatabaseInterface:
         """ Adds character info to database"""
         pass
 
-    def search_char(self, char_info: dict) -> str:
-        """ Searches for character closest to passed in info """
+    def search_char(self, char_info: dict) -> (str, dict):
+        """ Searches for character closest to passed in info and returns character name and personality fields """
         pass
 
 
@@ -71,16 +71,13 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
         ).get_result()
         # print(query_results)
         if not query_results["results"]:
-            return "You are completely unique! There is no one else like you!"
-        doc_id = query_results["results"][0]["id"]
-
-        response = self.discovery.get_document_status(
-            environment_id=self.environment_id,
-            collection_id=self.collection_id,
-            document_id=doc_id
-        ).get_result()
-
-        return response['filename']
+            return "You are completely unique! There is no one else like you!", dict()
+        book_result = query_results["results"][0]
+        char_name = book_result.pop("extracted_metadata", None)["filename"]
+        book_result.pop("id", None)
+        book_result.pop("result_metadata", None)
+        # print(book_result)
+        return char_name, book_result
 
     def convert_to_discovery_query_str(self, query_dict: dict):
         query_str = ''
@@ -95,14 +92,16 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
 if __name__ == "__main__":
     sample_text = "This is awful! I can't believe you did this to me? I was looking forward to this. How could you? You're disgusting!" # ==> outputs George Wickham
     sample_text_2 = "Oh, I'm quite downhearted that my brother is not here right now... However, I would love that! If you are talking about that! Then I must be part of the conversation! I sure that I would enjoy that very much! This would be delightful! " # ==> charlotte lucas
+    sample_text_3 = "this is a test sentence"
     nlu = NLUPersonalityInterface()
-    this_dict = nlu.get_personality(sample_text)
+    this_dict = nlu.get_personality(sample_text_3)
     full_dict = dict(this_dict[0])
     full_dict.update(this_dict[1])
     print(full_dict)
     ddb = DiscoveryCharDatabase("Collection 1")
-    char_match = ddb.search_char(full_dict)
+    char_match, personality = ddb.search_char(full_dict)
     print(char_match)
+    print(personality)
     # this_dict = {
     #     "brasdfasdfand": "skd",
     #     "model": "kjhlkjh",

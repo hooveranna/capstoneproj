@@ -11,3 +11,4 @@ Need to install packages:
 * pandas
 * plotly
 * kaleido
+* beautiful soup
