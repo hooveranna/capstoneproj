@@ -30,6 +30,7 @@
     </ul>
 </div>
 {% endif %}
+{% if sentences %}
 <div>
     Sentences involving {{character_name}} from {{title}}:
     <ul>
@@ -38,6 +39,7 @@
         {% endfor %}
     </ul>
 </div>
+{% endif %}
 <div class="row">
     <div class="col card">
         <div class="card-body">
