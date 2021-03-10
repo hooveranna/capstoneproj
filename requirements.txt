@@ -6,3 +6,8 @@ ibm-cloud-sdk-core == 3.5.1
 
 pytest~=6.2.2
 requests~=2.25.1
+plotly~=4.14.3
+pandas~=1.2.1
+Werkzeug~=1.0.1
+nltk~=3.5
+beautifulsoup4~=4.9.3
