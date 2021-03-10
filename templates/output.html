@@ -47,12 +47,14 @@
         </div>
         <img class="card-img-bottom" src="{{url_for('static',filename=file_name)}}" alt="Your Emotions chart image">
     </div>
+    {% if sentences %}
     <div class="col card">
         <div class="card-body">
             <h4 class="card-title">Character's Emotions Chart</h4>
         </div>
         <img class="card-img-bottom" src="{{url_for('static',filename=file_name3)}}" alt="Character's Emotions chart image">
     </div>
+    {% endif %}
 </div>
 <div class="container">
     <a class="btn btn-primary" href="{{ url_for('home') }}" role="button">Match me again!</a>
