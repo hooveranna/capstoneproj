@@ -56,7 +56,7 @@ def handle_500(e):
     original = getattr(e, "original_exception", None)
 
     #if original is None:
-    #    # direct 500 error, such as abocort(500)
+    #    # direct 500 error, such as abort(500)
     #    return render_template("500.html"), 500
 
     # wrapped unhandled error
