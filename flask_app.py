@@ -50,7 +50,7 @@ def submit(username, usertext):
         sentences = ["There are none"]
     book_title = personality.pop("title", "Unknown")
     emotions, concepts = get_emotions_from_dict(personality)
-    create_figure(emotions, file_name3);
+    create_figure(emotions, file_name3)
     # create_figure(personality, file_name4)
     return render_template('output.html', username=username, character_name=char_match, file_name=file_name, concepts=this_dict[1].keys(), file_name3=file_name3, char_concepts=personality.keys(), title=book_title, sentences=sentences)
 

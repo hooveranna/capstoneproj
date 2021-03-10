@@ -84,13 +84,15 @@ class GutenburgBookText(BookTextInterface):
         h1_tag = soup.find('h1').getText()
         title = re.sub(r'[^\w\s]', '', h1_tag)
         title = title.replace('\r', '')
-        title = re.sub("\s+", ' ', title)
+        title = re.sub(r'\s+', ' ', title)
         return title.title()
 
     def get_char_text(self, book_text, char):
-        pattern = '[^.]* %s [^.]*[.]' % char
-        sent_list = re.findall(pattern, book_text)
-        return sent_list
+        sents = []
+        for sent in nltk.sent_tokenize(book_text):
+            if re.search(char, sent):
+                sents.append(sent)
+        return sents
 
 
 if __name__ == "__main__":
