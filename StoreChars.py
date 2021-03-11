@@ -59,7 +59,11 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
         self.delete_collection()
         self.create_new_collection(collection_name)
 
-        return 0
+        collection = self.discovery.get_collection(
+            environment_id=self.environment_id,
+            collection_id=self.collection_id).get_result()
+
+        return collection["document_counts"]
 
     def add_char(self, char_name: str, char_info: dict):
         file_name = 'add_char.json'
@@ -114,7 +118,8 @@ if __name__ == "__main__":
     full_dict.update(this_dict[1])
     print(full_dict)
     ddb = DiscoveryCharDatabase("Collection 1")
-    # ddb.reset_db("Collection 1")
+    # document_counts = ddb.reset_db("Collection 1")
+    # print(document_counts)
     char_match, personality = ddb.search_char(full_dict)
     print(char_match)
     print(personality)
