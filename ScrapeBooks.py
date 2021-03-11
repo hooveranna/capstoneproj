@@ -94,6 +94,13 @@ class GutenburgBookText(BookTextInterface):
                 sents.append(sent)
         return sents
 
+    def get_image(self,char_name):
+        url = "https://www.bing.com/images/search?q=" + char_name + "&first=1&tsc=ImageHoverTitle"
+        headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:54.0) Gecko/20100101 Firefox/54.0'}
+        source = requests.get(url,headers=headers)
+        soup = BeautifulSoup(source.content)
+        return soup.body.select('div[id=b_content] > div[id=vm_c] > div[class=dg_b] > div[id=mmComponent_images_2] > ul[class=dgControl_list] > li')[0].select('div > div[class=imgpt] > a[class=iusc] > div > img')[0]['src']
+        
 
 if __name__ == "__main__":
     # gutenburg = GutenburgBookText()
@@ -101,7 +108,7 @@ if __name__ == "__main__":
     # gutenburg.get_char_names(text)
     # print(gutenburg.get_char_sent(text, 'Alice'))
     # pride and prejudice book - 1342, study in scarlet - 244, the odyssey - 1727
-    book_num = 1727
+    book_num = 64772
     gutenburg = GutenburgBookText()
     nlu = NLUPersonalityInterface()
     ddb = DiscoveryCharDatabase("Collection 1")
@@ -126,5 +133,6 @@ if __name__ == "__main__":
             full_dict.update(char_personality[1])
             full_dict["title"] = book_title
             full_dict["sentences"] = sent_list
+            full_dict["image"] = gutenburg.get_image(name)
             # ddb.add_char(name, full_dict)
             print(full_dict)

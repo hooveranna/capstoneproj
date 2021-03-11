@@ -12,6 +12,11 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Sherlock_Holmes_Portrait_Paget.jpg" alt="Sherlock">
     -->
 </div>
+{% if image %}
+<div>
+        <img src="{{image}}" alt="Character Image">
+</div>
+{% endif %}
 {% if concepts %}
 <div>
     You had these concepts in your text:
