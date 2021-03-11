@@ -108,7 +108,7 @@ if __name__ == "__main__":
     # gutenburg.get_char_names(text)
     # print(gutenburg.get_char_sent(text, 'Alice'))
     # pride and prejudice book - 1342, study in scarlet - 244, the odyssey - 1727
-    book_num = 64772
+    book_num = 1727
     gutenburg = GutenburgBookText()
     nlu = NLUPersonalityInterface()
     ddb = DiscoveryCharDatabase("Collection 1")
