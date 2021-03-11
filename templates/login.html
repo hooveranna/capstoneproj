@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block header %}
+ <h1>{% block title %}Log in{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form action="" method="post">
+      <input type="text" placeholder="Username" name="username" value="{{
+          request.form.username }}">
+      <input type="password" placeholder="Password" name="password" value="{{
+          request.form.password }}">
+      <input class="btn btn-primary btn-lg" type="submit" value="Login">
+    </form>
+    {% if error %}
+    <p class="error"><strong>Error:</strong> {{ error }}
+    {% endif %}
+</div>
+
+
+
+
+{% endblock %}
