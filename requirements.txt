@@ -11,3 +11,4 @@ pandas~=1.2.1
 Werkzeug~=1.0.1
 nltk~=3.5
 beautifulsoup4~=4.9.3
+WTForms~=2.3.3

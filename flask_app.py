@@ -2,7 +2,7 @@
 from flask import Flask
 from flask import render_template
 from flask import (
-    redirect, request, url_for
+    redirect, request, url_for, request, session, flash
 )
 from TextPersonality import NLUPersonalityInterface
 from StoreChars import DiscoveryCharDatabase
@@ -10,10 +10,11 @@ from werkzeug.exceptions import InternalServerError
 from chart import create_figure
 import time
 import random
+from forms import RegistrationForm, LoginForm
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
-
+app.config['SECRET_KEY'] = 'my precious'
 # run_with_ngrok(app)   # starts ngrok when the app is run
 
 
@@ -54,15 +55,31 @@ def submit(username, usertext):
     # create_figure(personality, file_name4)
     return render_template('output.html', username=username, character_name=char_match, file_name=file_name, concepts=this_dict[1].keys(), file_name3=file_name3, char_concepts=personality.keys(), title=book_title, sentences=sentences)
 
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for {form.username.data}!', 'success')
+        return redirect(url_for('home'))
+    return render_template('register.html', title='Register', form=form)
+
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again.'
-        else:
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
+            flash('You have been logged in!', 'success')
             return redirect(url_for('home'))
-    return render_template('login.html', error=error)
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'danger')
+    return render_template('login.html', title='Login', form=form)
+
+@app.route('/logout')
+#@login_required
+def logout():
+    session.pop('logged_in', None)
+    flash('You were logged out.')
+    return redirect(url_for('welcome'))
 
 
 @app.route("/about-us")

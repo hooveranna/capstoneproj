@@ -12,7 +12,10 @@
   </li>
   <li class="nav-item">
     <a class="nav-link" href="{{ url_for('about') }}">About Us</a>
-    <a class="nav-link" href="{{ url_for('login') }}">login</a>
+  </li>
+  <li class="navbar-nav">
+    <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
+    <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
   </li>
 </ul>
 </nav>
@@ -20,6 +23,15 @@
   <header>
     {% block header %}{% endblock %}
   </header>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
   {% block content %}{% endblock %}
 </section>
 </html>
