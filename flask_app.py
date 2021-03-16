@@ -74,11 +74,11 @@ def handle_500(e):
 
 def get_emotions_from_dict(personality):
     emotions_dict = dict()
-    emotions_dict["disgust"] = personality.pop("disgust", 0)
-    emotions_dict["joy"] = personality.pop("joy", 0)
-    emotions_dict["anger"] = personality.pop("anger", 0)
     emotions_dict["sadness"] = personality.pop("sadness", 0)
+    emotions_dict["joy"] = personality.pop("joy", 0)
     emotions_dict["fear"] = personality.pop("fear", 0)
+    emotions_dict["disgust"] = personality.pop("disgust", 0)
+    emotions_dict["anger"] = personality.pop("anger", 0)
     return emotions_dict, personality
 
 
