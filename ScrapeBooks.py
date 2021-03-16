@@ -100,31 +100,31 @@ if __name__ == "__main__":
     # text = gutenburg.get_text(12)
     # gutenburg.get_char_names(text)
     # print(gutenburg.get_char_sent(text, 'Alice'))
-    # pride and prejudice book - 1342, study in scarlet - 244, the odyssey - 1727
-    book_num = 1727
+    # pride and prejudice book - 1342, study in scarlet - 244, the odyssey - 1727, 64317 - the great gatsby, 25344 - scarlet letter, 43 - jekyll and hyde, 76 - huckleberry finn, 46 - christmas carol, 16 - peter pan, 135 - les mis (bad idea because it has french in it)
+    book_nums = [1342, 244, 1727, 64317, 25344, 43, 76, 46, 16]
     gutenburg = GutenburgBookText()
     nlu = NLUPersonalityInterface()
     ddb = DiscoveryCharDatabase("Collection 1")
-    text = gutenburg.get_text(book_num)
-    book_title = gutenburg.get_title(book_num)
-    char_names = gutenburg.get_char_names(text)
-    # print(char_names)
-    # print(len(char_names))
-    # print(gutenburg.get_char_text(text, 'Jefferson Hope'))
-    for name in char_names:
-        name = name.title()
-        print(name)
-        names = name.split(" ")
-        first = names[0];
-        last = names[len(names) - 1]
-        sent_list = gutenburg.get_char_text(text, first)
-        sent_list += gutenburg.get_char_text(text, last)
-        char_sents = ''.join(sent_list)
-        if char_sents:
-            char_personality = nlu.get_personality(char_sents)
-            full_dict = dict(char_personality[0])
-            full_dict.update(char_personality[1])
-            full_dict["title"] = book_title
-            full_dict["sentences"] = sent_list
-            # ddb.add_char(name, full_dict)
-            print(full_dict)
+    print(ddb.reset_db("Collection 1"))
+    for book_num in book_nums:
+        text = gutenburg.get_text(book_num)
+        book_title = gutenburg.get_title(book_num)
+        print(book_title)
+        char_names = gutenburg.get_char_names(text)
+        for name in char_names:
+            name = name.title()
+            print(name)
+            names = name.split(" ")
+            first = names[0]
+            last = names[len(names) - 1]
+            sent_list = gutenburg.get_char_text(text, first)
+            sent_list += gutenburg.get_char_text(text, last)
+            char_sents = ''.join(sent_list)
+            if char_sents:
+                char_personality = nlu.get_personality(char_sents)
+                full_dict = dict(char_personality[0])
+                full_dict.update(char_personality[1])
+                full_dict["title"] = book_title
+                full_dict["sentences"] = sent_list
+                # ddb.add_char(name, full_dict)
+                print(full_dict)

@@ -104,7 +104,7 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
             if query_str:
                 query_str += ' | '
             value = query_dict[key]
-            query_str += f'{key}<={value + self.conf_interval}, {key}>={max(value - self.conf_interval, 0.0001)}'
+            query_str += f'({key}<={value + self.conf_interval}, {key}>={max(value - self.conf_interval, 0.0001)})'
         return query_str
 
 
