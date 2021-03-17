@@ -37,15 +37,14 @@ class NLUPersonalityInterface:
                 concepts=ConceptsOptions(limit=numberConcepts))).get_result()
 
         personality_dict = emotionResponse["emotion"]["document"]["emotion"]
-        for i in range(len(conceptResponse["concepts"])):
-            if " " in conceptResponse["concepts"][i]["text"]:
-                 concept_dict[conceptResponse["concepts"][i]["text"].replace(" ", "_")] = conceptResponse["concepts"][i]["relevance"]
-            else:
-                concept_dict[conceptResponse["concepts"][i]["text"]] = conceptResponse["concepts"][i]["relevance"]
+        for concept in conceptResponse["concepts"]:
+            concept_dict[concept["text"].replace(" ", "_")] = concept["relevance"]
 
         return [personality_dict, concept_dict]
 
 
 if __name__ == "__main__":
     nlu = NLUPersonalityInterface()
-    print(nlu.get_personality('But the black kitten had been finished with earlier in the afternoon, and so, while Alice was sitting curled up in a corner of the great arm-chair, half talking to herself and half asleep, the kitten had been having a grand game of romps with the ball of worsted Alice had been trying to wind up, and had been rolling it up and down till it had all come undone again; and there it was, spread over the hearth-rug, all knots and tangles, with the kitten running after its own tail in the middle.'))
+    #str = 'But the black kitten had been finished with earlier in the afternoon, and so, while Alice was sitting curled up in a corner of the great arm-chair, half talking to herself and half asleep, the kitten had been having a grand game of romps with the ball of worsted Alice had been trying to wind up, and had been rolling it up and down till it had all come undone again; and there it was, spread over the hearth-rug, all knots and tangles, with the kitten running after its own tail in the middle.'
+    test_str = 'I like to read about Mysteries and Courtship'
+    print(nlu.get_personality(test_str))
