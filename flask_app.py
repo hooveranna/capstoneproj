@@ -8,7 +8,6 @@ from TextPersonality import NLUPersonalityInterface
 from StoreChars import DiscoveryCharDatabase, get_emotions_from_dict
 from werkzeug.exceptions import InternalServerError
 from chart import create_figure
-import time
 import random
 
 app = Flask(__name__)
@@ -43,9 +42,9 @@ def submit(username, usertext):
     if personality:
         sentences = personality.pop("sentences")
         if len(sentences) < 3:
-            sentences = random.sample(sentences,1)
+            sentences = random.sample(sentences, 1)
         else:
-            sentences = random.sample(sentences,3)
+            sentences = random.sample(sentences, 3)
     else:
         sentences = []
     book_title = personality.pop("title", "Unknown")
@@ -64,13 +63,12 @@ def about(name=None):
 def handle_500(e):
     original = getattr(e, "original_exception", None)
 
-    #if original is None:
+    # if original is None:
     #    # direct 500 error, such as abort(500)
     #    return render_template("500.html"), 500
 
     # wrapped unhandled error
     return render_template("500_unhandled.html", e=original), 500
-
 
 
 app.run()
