@@ -116,14 +116,14 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
         return query_str
 
 
-def get_emotions_from_dict(personality):
+def get_emotions_from_dict(personality_dict):
     emotions_dict = dict()
-    emotions_dict["sadness"] = personality.pop("sadness", 0)
-    emotions_dict["joy"] = personality.pop("joy", 0)
-    emotions_dict["fear"] = personality.pop("fear", 0)
-    emotions_dict["disgust"] = personality.pop("disgust", 0)
-    emotions_dict["anger"] = personality.pop("anger", 0)
-    return emotions_dict, personality
+    emotions_dict["sadness"] = personality_dict.pop("sadness", 0)
+    emotions_dict["joy"] = personality_dict.pop("joy", 0)
+    emotions_dict["fear"] = personality_dict.pop("fear", 0)
+    emotions_dict["disgust"] = personality_dict.pop("disgust", 0)
+    emotions_dict["anger"] = personality_dict.pop("anger", 0)
+    return emotions_dict, personality_dict
 
 
 if __name__ == "__main__":
