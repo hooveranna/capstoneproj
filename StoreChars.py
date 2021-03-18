@@ -112,7 +112,7 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
             if query_str:
                 query_str += ' | '
             value = personality_dict[concept]
-            query_str += f'({concept}:*^5, {concept}:*^5)'
+            query_str += f'({concept}:*^5)'
         return query_str
 
 
