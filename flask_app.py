@@ -10,12 +10,17 @@ from werkzeug.exceptions import InternalServerError
 from chart import create_figure
 import time
 import random
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, UpdateAccountForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_login import UserMixin
 from flask_login import login_user,current_user, logout_user, login_required
+from forms import RegistrationForm, LoginForm, UpdateAccountForm
+from datetime import datetime
+import secrets
+import os
+from PIL import Image
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
@@ -39,16 +44,31 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
-    #posts = db.relationship('Post', backref='author', lazy=True)
+    texts = db.relationship('Text', backref='author', lazy=True) # can user text.author to get user info
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+
+class Text(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False) # user input name
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False) #user input text to do analyze
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f"Text('{self.name}', '{self.date_posted}', '{self.content}', '{self.user_id}')"
+
 
 @app.route("/", methods=('GET', 'POST'))
 def home(name=None):
     if request.method == 'POST':
         username = request.form['name']
         usertext = request.form['usertext']
+        if current_user.is_authenticated:
+            text = Text(name=username, content=usertext, user_id=current_user.id)
+            db.session.add(text)
+            db.session.commit()
         return redirect(url_for('submit', username=username, usertext=usertext))
     return render_template('index.html', name=name)
 
@@ -114,10 +134,35 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-@app.route("/account")
+
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+
+    output_size = (125, 125)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+
+    return picture_fn
+
+@app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html', title='Account')
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            current_user.image_file = picture_file
+            db.session.commit()
+            flash('Your account has been updated!', 'success')
+            return redirect(url_for('account'))
+    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+    texts = Text.query.filter_by(user_id = current_user.id).all()
+    return render_template('account.html', title='Account',
+                           image_file=image_file, form=form, texts=texts)
 
 
 @app.route("/about-us")
@@ -146,6 +191,6 @@ def get_emotions_from_dict(personality):
     emotions_dict["fear"] = personality.pop("fear", 0)
     return emotions_dict, personality
 
-app.run()
-# if __name__ == '__main__':
-#     app.run()
+#app.run()
+if __name__ == '__main__':
+   app.run()
