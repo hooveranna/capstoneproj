@@ -40,7 +40,7 @@ class GutenburgBookText(BookTextInterface):
     # code from https://shravan-kuchkula.github.io/scrape_clean_normalize_gutenberg_text/#appendix
     def remove_gutenburg_headers(self, book_text):
         book_text = book_text.replace('\r', '')
-        book_text = re.sub("\s+", ' ', book_text)
+        book_text = re.sub(r'\s+', ' ', book_text)
         start_match = re.search(r'\*{3}\s?START.+?\*{3}', book_text)
         end_match = re.search(r'\*{3}\s?END.+?\*{3}', book_text)
         try:
@@ -56,15 +56,15 @@ class GutenburgBookText(BookTextInterface):
             book_text = book_text[:book_text.find('End of Project Gutenberg')]
         return book_text
 
-    def get_char_names(self,book_text):
+    def get_char_names(self, book_text):
         twos = []
         threes = []
         for sent in nltk.sent_tokenize(book_text):
             for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
                 if hasattr(chunk, 'label') and chunk.label() == "PERSON":
-                    if len(chunk) == 2 and chunk[0][0] != 'Mr.'and chunk[0][0] != 'Mrs.'and chunk[0][0] != 'Ms.'and chunk[0][0] != 'Dr.'and chunk[0][0] != 'Mister'and chunk[0][0] != 'Lady'and chunk[0][0] != 'Miss'and chunk[0][0] != 'Poor'and chunk[0][0] != 'Did'and chunk[0][0] != 'Captain'and chunk[0][0] != 'Colonel'and chunk[0][0] != 'Could'and chunk[0][0] != 'Mount'and chunk[0][0] != 'Madame'and chunk[0][0] != 'Doctor'and chunk[0][0] != 'Sir'and chunk[0][0] != 'Brother'and chunk[0][0] != 'Sister'and chunk[0][0] != 'Does'and chunk[0][0] != 'Part'and chunk[0][0] != 'Good'and chunk[1][0] and chunk[0][0] != 'Young' and chunk[0][0] != 'Old'!= 'Town' and chunk[1][0] != 'City' and chunk[1][0] != 'Park' and chunk[1][0] != 'Place' and chunk[0][0] != 'Street' and chunk[1][0] != 'Street' and chunk[1][0] != 'Bridge' and chunk[1][0] != 'Station' and chunk[1][0] != 'Road'and chunk[1][0] != 'Lake'and chunk[1][0] != 'Pond'and chunk[1][0] != 'Sea' and chunk[1][0] != 'Terrace'and chunk[1][0] != 'House'and chunk[1][0] != 'Lodge'and chunk[1][0] != 'Woods'and chunk[1][0] != 'Mount'and chunk[1][0] != 'Dale'and chunk[1][0] != 'Gardens'and chunk[1][0] != 'Court'and len(chunk[1][0]) > 2:
+                    if len(chunk) == 2 and chunk[0][0] != 'Mr.' and chunk[0][0] != 'Mrs.' and chunk[0][0] != 'Ms.' and chunk[0][0] != 'Dr.' and chunk[0][0] != 'Mister' and chunk[0][0] != 'Lady' and chunk[0][0] != 'Miss' and chunk[0][0] != 'Poor' and chunk[0][0] != 'Did' and chunk[0][0] != 'Captain' and chunk[0][0] != 'Colonel' and chunk[0][0] != 'Could' and chunk[0][0] != 'Mount' and chunk[0][0] != 'Madame' and chunk[0][0] != 'Doctor' and chunk[0][0] != 'Sir' and chunk[0][0] != 'Brother' and chunk[0][0] != 'Sister' and chunk[0][0] != 'Does' and chunk[0][0] != 'Part' and chunk[0][0] != 'Good' and chunk[1][0] and chunk[0][0] != 'Young' and chunk[0][0] != 'Old' != 'Town' and chunk[1][0] != 'City' and chunk[1][0] != 'Park' and chunk[1][0] != 'Place' and chunk[0][0] != 'Street' and chunk[1][0] != 'Street' and chunk[1][0] != 'Bridge' and chunk[1][0] != 'Station' and chunk[1][0] != 'Road' and chunk[1][0] != 'Lake' and chunk[1][0] != 'Pond' and chunk[1][0] != 'Sea' and chunk[1][0] != 'Terrace' and chunk[1][0] != 'House' and chunk[1][0] != 'Lodge' and chunk[1][0] != 'Woods' and chunk[1][0] != 'Mount' and chunk[1][0] != 'Dale' and chunk[1][0] != 'Gardens' and chunk[1][0] != 'Court' and len(chunk[1][0]) > 2:
                         twos.append(chunk[0][0] + " " + chunk[1][0])
-                    elif len(chunk) == 3 and chunk[0][0] != 'Did'and chunk[0][0] != 'Could'and chunk[2][0] != 'City'and len(chunk[1][0]) > 2:
+                    elif len(chunk) == 3 and chunk[0][0] != 'Did' and chunk[0][0] != 'Could' and chunk[2][0] != 'City' and len(chunk[1][0]) > 2:
                         threes.append(chunk[0][0] + " " + chunk[1][0] + " " + chunk[2][0])
 
         twos = np.unique(np.array(twos))
@@ -75,7 +75,7 @@ class GutenburgBookText(BookTextInterface):
                 if twos[i] in threes[j]:
                     remove.append(j)
 
-        return np.append(twos, np.delete(threes,remove))
+        return np.append(twos, np.delete(threes, remove))
 
     def get_title(self, book_no):
         url = 'http://www.gutenberg.org/files/%d/%d-h/%d-h.htm' % (book_no, book_no, book_no)
@@ -100,31 +100,31 @@ if __name__ == "__main__":
     # text = gutenburg.get_text(12)
     # gutenburg.get_char_names(text)
     # print(gutenburg.get_char_sent(text, 'Alice'))
-    # pride and prejudice book - 1342, study in scarlet - 244, the odyssey - 1727
-    book_num = 1727
+    # pride and prejudice book - 1342, study in scarlet - 244, the odyssey - 1727, 64317 - the great gatsby, 25344 - scarlet letter, 43 - jekyll and hyde, 76 - huckleberry finn, 46 - christmas carol, 16 - peter pan, 135 - les mis (bad idea because it has french in it)
+    book_nums = [1342, 244, 1727, 64317, 25344, 43, 76, 46, 16]
     gutenburg = GutenburgBookText()
     nlu = NLUPersonalityInterface()
     ddb = DiscoveryCharDatabase("Collection 1")
-    text = gutenburg.get_text(book_num)
-    book_title = gutenburg.get_title(book_num)
-    char_names = gutenburg.get_char_names(text)
-    # print(char_names)
-    # print(len(char_names))
-    # print(gutenburg.get_char_text(text, 'Jefferson Hope'))
-    for name in char_names:
-        name = name.title()
-        print(name)
-        names = name.split(" ")
-        first = names[0];
-        last = names[len(names) - 1]
-        sent_list = gutenburg.get_char_text(text, first)
-        sent_list += gutenburg.get_char_text(text, last)
-        char_sents = ''.join(sent_list)
-        if char_sents:
-            char_personality = nlu.get_personality(char_sents)
-            full_dict = dict(char_personality[0])
-            full_dict.update(char_personality[1])
-            full_dict["title"] = book_title
-            full_dict["sentences"] = sent_list
-            # ddb.add_char(name, full_dict)
-            print(full_dict)
+    # print(ddb.reset_db("Collection 1"))
+    for book_num in book_nums:
+        text = gutenburg.get_text(book_num)
+        book_title = gutenburg.get_title(book_num)
+        print(book_title)
+        char_names = gutenburg.get_char_names(text)
+        for name in char_names:
+            name = name.title()
+            print(name)
+            names = name.split(" ")
+            first = names[0]
+            last = names[len(names) - 1]
+            sent_list = gutenburg.get_char_text(text, first)
+            sent_list += gutenburg.get_char_text(text, last)
+            char_sents = ''.join(sent_list)
+            if char_sents:
+                char_personality = nlu.get_personality(char_sents)
+                full_dict = dict(char_personality[0])
+                full_dict.update(char_personality[1])
+                full_dict["title"] = book_title
+                full_dict["sentences"] = sent_list
+                # ddb.add_char(name, full_dict)
+                print(full_dict)

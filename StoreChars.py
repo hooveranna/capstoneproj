@@ -100,12 +100,30 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
 
     def convert_to_discovery_query_str(self, query_dict: dict):
         query_str = ''
-        for key in query_dict:
+        emotions_dict, personality_dict = get_emotions_from_dict(query_dict)
+
+        for emotion in emotions_dict:
             if query_str:
                 query_str += ' | '
-            value = query_dict[key]
-            query_str += f'{key}<={value + self.conf_interval}, {key}>={max(value - self.conf_interval, 0.0001)}'
+            value = emotions_dict[emotion]
+            query_str += f'({emotion}<={value + self.conf_interval}, {emotion}>={max(value - self.conf_interval, 0.0001)})'
+
+        for concept in personality_dict:
+            if query_str:
+                query_str += ' | '
+            value = personality_dict[concept]
+            query_str += f'({concept}:*^5)'
         return query_str
+
+
+def get_emotions_from_dict(personality_dict):
+    emotions_dict = dict()
+    emotions_dict["sadness"] = personality_dict.pop("sadness", 0)
+    emotions_dict["joy"] = personality_dict.pop("joy", 0)
+    emotions_dict["fear"] = personality_dict.pop("fear", 0)
+    emotions_dict["disgust"] = personality_dict.pop("disgust", 0)
+    emotions_dict["anger"] = personality_dict.pop("anger", 0)
+    return emotions_dict, personality_dict
 
 
 if __name__ == "__main__":
