@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Error500{% endblock %}
+
+{% block content %}
+<div class="alert alert-primary" role="alert">
+    Error: {{error}}
+</div>
+<p>Click OK to go back to main page.
+<p>
+    <a class="btn btn-primary" href="{{ url_for('home') }}" role="button">OK</a>
+    {% endblock %}
