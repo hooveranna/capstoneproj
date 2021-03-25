@@ -54,10 +54,13 @@ class Text(db.Model):
     name = db.Column(db.String(100), nullable=False) # user input name
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False) #user input text to do analyze
+    character_name = db.Column(db.Text, nullable=False)
+    title = db.Column(db.Text, nullable=False)
+    personality = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f"Text('{self.name}', '{self.date_posted}', '{self.content}', '{self.user_id}')"
+        return f"Text('{self.name}', '{self.date_posted}', '{self.content}','{self.character_name}','{self.title}','{self.personality}', '{self.user_id}')"
 
 
 @app.route("/", methods=('GET', 'POST'))
@@ -65,10 +68,6 @@ def home(name=None):
     if request.method == 'POST':
         username = request.form['name']
         usertext = request.form['usertext']
-        if current_user.is_authenticated:
-            text = Text(name=username, content=usertext, user_id=current_user.id)
-            db.session.add(text)
-            db.session.commit()
         return redirect(url_for('submit', username=username, usertext=usertext))
     return render_template('index.html', name=name)
 
@@ -99,6 +98,10 @@ def submit(username, usertext):
     emotions, concepts = get_emotions_from_dict(personality)
     create_figure(emotions, file_name3)
     # create_figure(personality, file_name4)
+    if current_user.is_authenticated:
+        text = Text(name=username, content=usertext, character_name=char_match, title=book_title, personality=''.join(personality), user_id=current_user.id)
+        db.session.add(text)
+        db.session.commit()
     return render_template('output.html', username=username, character_name=char_match, file_name=file_name, concepts=this_dict[1].keys(), file_name3=file_name3, char_concepts=personality.keys(), title=book_title, sentences=sentences)
 
 @app.route("/register", methods=['GET', 'POST'])

@@ -36,7 +36,11 @@
           <div class="card-body">
             <h5 class="card-title">Name: {{ text.name }}</h5>
             <p class="card-text">{{ text.content }}</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+             <p class="card-text">Matched With: {{ text.character_name }}
+                 {% if text.personality %}
+                 from the novel <i>{{text.title}} </i>
+                 {% endif %}
+             </p>
           </div>
         </div>
         {% endfor %}
