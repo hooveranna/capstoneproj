@@ -124,7 +124,7 @@ if __name__ == "__main__":
     #         outfile.write(script)
     test_script_info = {"relative_link": "/Movie Scripts/10 Things I Hate About You Script.html"}
     test_text = IMSDBScrapeScripts.get_text(test_script_info)
-    # print(IMSDBScrapeScripts.clean_script(test_text["script_soup"].get_text()))
+    # print(test_text["script_soup"].get_text())
     # test_title = IMSDBScrapeScripts.get_title(test_script_info)
     # print(test_title)
     IMSDBScrapeScripts.get_char_text(test_text, "JANE")
