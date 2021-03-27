@@ -52,7 +52,7 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
             script_url = IMSDBScrapeScripts.BASE_URL + script_link
             script_soup = BeautifulSoup(requests.get(script_url).text, "html.parser")
             script_text = script_soup.find_all('td', {'class': "scrtext"})[0]  #.get_text()
-            # script_text = IMSDBScrapeScripts.clean_script(script_text)
+            script_text = IMSDBScrapeScripts.clean_script(script_text)
             return {"script_soup": script_text}
         else:
             print('%s is a pdf :(' % tail)
@@ -64,7 +64,8 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
 
     @staticmethod
     def get_char_text(script_info: dict, char: str):
-        pass
+        text = script_info["script_soup"]
+        print(text)
 
     @staticmethod
     def get_title(script_info: dict):
@@ -74,18 +75,35 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
         return tail.replace(" Script.html", "")
 
     @staticmethod
-    def clean_script(text):
-        text = text.replace('Back to IMSDb', '')
-        text = text.replace('''<b><!--
-    </b>if (window!= top)
-    top.location.href=location.href
-    <b>// -->
-    </b>
-    ''', '')
-        text = text.replace('''          Scanned by http://freemoviescripts.com
-              Formatting by http://simplyscripts.home.att.net
-    ''', '')
-        return text.replace(r'\r', '')
+    def clean_script(script_text):
+        # remove empty tags from soup obj
+        for x in script_text.find_all():
+            # fetching text from tag and remove whitespaces
+            if len(x.get_text(strip=True)) == 0:
+                # Remove empty tag
+                x.extract()
+
+        tables = script_text.find_all('table')
+        for table in tables:
+            table.extract()
+        scripts = script_text.find_all('script')
+        for script in scripts:
+            script.extract()
+        divs = script_text.find_all('div')
+        for div in divs:
+            div.extract()
+        return script_text
+    #     text = text.replace('Back to IMSDb', '')
+    #     text = text.replace('''<b><!--
+    # </b>if (window!= top)
+    # top.location.href=location.href
+    # <b>// -->
+    # </b>
+    # ''', '')
+    #     text = text.replace('''          Scanned by http://freemoviescripts.com
+    #           Formatting by http://simplyscripts.home.att.net
+    # ''', '')
+    #     return text.replace(r'\r', '')
 
 
 if __name__ == "__main__":
@@ -106,6 +124,7 @@ if __name__ == "__main__":
     #         outfile.write(script)
     test_script_info = {"relative_link": "/Movie Scripts/10 Things I Hate About You Script.html"}
     test_text = IMSDBScrapeScripts.get_text(test_script_info)
-    print(IMSDBScrapeScripts.clean_script(test_text["script_soup"].get_text()))
-    test_title = IMSDBScrapeScripts.get_title(test_script_info)
-    print(test_title)
+    # print(IMSDBScrapeScripts.clean_script(test_text["script_soup"].get_text()))
+    # test_title = IMSDBScrapeScripts.get_title(test_script_info)
+    # print(test_title)
+    IMSDBScrapeScripts.get_char_text(test_text, "JANE")
