@@ -1,8 +1,8 @@
 import numpy as np
-import os
+import re
 from urllib.parse import quote
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 import requests
 
 
@@ -65,7 +65,18 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
     @staticmethod
     def get_char_text(script_info: dict, char: str):
         text = script_info["script_soup"]
-        print(text)
+        bolds = text.find_all('b')
+        char_text = []
+        for bold in bolds:
+            if bold.get_text(strip=True) == char:
+                char_str = bold.next_sibling
+                if isinstance(char_str, NavigableString):
+                    char_str = char_str.strip()
+                    char_str = re.sub(r'\r\n', '', char_str)
+                    char_str = re.sub(r'\s+', ' ', char_str)
+                    char_text.append(char_str)
+
+        return char_text
 
     @staticmethod
     def get_title(script_info: dict):
@@ -123,8 +134,8 @@ if __name__ == "__main__":
     #     with open(os.path.join(SCRIPTS_DIR, title.strip('.html') + '.txt'), 'w', encoding='utf-8') as outfile:
     #         outfile.write(script)
     test_script_info = {"relative_link": "/Movie Scripts/10 Things I Hate About You Script.html"}
-    test_text = IMSDBScrapeScripts.get_text(test_script_info)
+    # test_text = IMSDBScrapeScripts.get_text(test_script_info)
     # print(test_text["script_soup"].get_text())
     # test_title = IMSDBScrapeScripts.get_title(test_script_info)
     # print(test_title)
-    IMSDBScrapeScripts.get_char_text(test_text, "JANE")
+    # print(IMSDBScrapeScripts.get_char_text(test_text, "BIANCA"))
