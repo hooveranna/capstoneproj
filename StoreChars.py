@@ -46,6 +46,25 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
 
         return 0
 
+    def delete_collection(self):
+        delete_collection = self.discovery.delete_collection(
+            environment_id=self.environment_id,
+            collection_id=self.collection_id).get_result()
+
+        self.collection_id = None
+
+        return 0
+
+    def reset_db(self, collection_name):
+        self.delete_collection()
+        self.create_new_collection(collection_name)
+
+        collection = self.discovery.get_collection(
+            environment_id=self.environment_id,
+            collection_id=self.collection_id).get_result()
+
+        return collection["document_counts"]
+
     def add_char(self, char_name: str, char_info: dict):
         file_name = 'add_char.json'
         with open(file_name, 'w') as fp:
@@ -81,12 +100,30 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
 
     def convert_to_discovery_query_str(self, query_dict: dict):
         query_str = ''
-        for key in query_dict:
+        emotions_dict, personality_dict = get_emotions_from_dict(query_dict)
+
+        for emotion in emotions_dict:
             if query_str:
                 query_str += ' | '
-            value = query_dict[key]
-            query_str += f'{key}<={value + self.conf_interval}, {key}>={max(value - self.conf_interval, 0.0001)}'
+            value = emotions_dict[emotion]
+            query_str += f'({emotion}<={value + self.conf_interval}, {emotion}>={max(value - self.conf_interval, 0.0001)})'
+
+        for concept in personality_dict:
+            if query_str:
+                query_str += ' | '
+            value = personality_dict[concept]
+            query_str += f'({concept}:*^5)'
         return query_str
+
+
+def get_emotions_from_dict(personality_dict):
+    emotions_dict = dict()
+    emotions_dict["sadness"] = personality_dict.pop("sadness", 0)
+    emotions_dict["joy"] = personality_dict.pop("joy", 0)
+    emotions_dict["fear"] = personality_dict.pop("fear", 0)
+    emotions_dict["disgust"] = personality_dict.pop("disgust", 0)
+    emotions_dict["anger"] = personality_dict.pop("anger", 0)
+    return emotions_dict, personality_dict
 
 
 if __name__ == "__main__":
@@ -99,6 +136,8 @@ if __name__ == "__main__":
     full_dict.update(this_dict[1])
     print(full_dict)
     ddb = DiscoveryCharDatabase("Collection 1")
+    # document_counts = ddb.reset_db("Collection 1")
+    # print(document_counts)
     char_match, personality = ddb.search_char(full_dict)
     print(char_match)
     print(personality)

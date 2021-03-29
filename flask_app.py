@@ -5,10 +5,9 @@ from flask import (
     redirect, request, url_for, request, session, flash
 )
 from TextPersonality import NLUPersonalityInterface
-from StoreChars import DiscoveryCharDatabase
+from StoreChars import DiscoveryCharDatabase, get_emotions_from_dict
 from werkzeug.exceptions import InternalServerError
 from chart import create_figure
-import time
 import random
 from forms import RegistrationForm, LoginForm, UpdateAccountForm
 from flask_sqlalchemy import SQLAlchemy
@@ -68,6 +67,10 @@ def home(name=None):
     if request.method == 'POST':
         username = request.form['name']
         usertext = request.form['usertext']
+        notAllowed = ['\\','/','=','+','-','_','{','[',']','}','|','<','>']
+        for e in notAllowed:
+            if e in usertext:
+                return render_template('invalid_char.html', error=e)
         return redirect(url_for('submit', username=username, usertext=usertext))
     return render_template('index.html', name=name)
 
@@ -79,7 +82,10 @@ def submit(username, usertext):
     file_name3 = "character_emotions.jpeg"
     # file_name4 = "character_concept.jpeg"
     nlu = NLUPersonalityInterface()
-    this_dict = nlu.get_personality(usertext)
+    try:
+        this_dict = nlu.get_personality(usertext)
+    except Exception as e: 
+        return render_template('error.html', error=e.message)
     create_figure(this_dict[0], file_name)
     # create_figure(this_dict[1], file_name2)
     ddb = DiscoveryCharDatabase("Collection 1")
@@ -89,9 +95,9 @@ def submit(username, usertext):
     if personality:
         sentences = personality.pop("sentences")
         if len(sentences) < 3:
-            sentences = random.sample(sentences,1)
+            sentences = random.sample(sentences, 1)
         else:
-            sentences = random.sample(sentences,3)
+            sentences = random.sample(sentences, 3)
     else:
         sentences = []
     book_title = personality.pop("title", "Unknown")
@@ -177,12 +183,13 @@ def about(name=None):
 def handle_500(e):
     original = getattr(e, "original_exception", None)
 
-    #if original is None:
+    # if original is None:
     #    # direct 500 error, such as abort(500)
     #    return render_template("500.html"), 500
 
     # wrapped unhandled error
     return render_template("500_unhandled.html", e=original), 500
+
 
 
 def get_emotions_from_dict(personality):
@@ -194,6 +201,5 @@ def get_emotions_from_dict(personality):
     emotions_dict["fear"] = personality.pop("fear", 0)
     return emotions_dict, personality
 
-#app.run()
-if __name__ == '__main__':
-   app.run()
+app.run()
+
