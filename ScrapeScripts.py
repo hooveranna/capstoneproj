@@ -1,5 +1,7 @@
 import numpy as np
 import re
+import spacy
+import nltk
 from urllib.parse import quote
 
 from bs4 import BeautifulSoup, NavigableString
@@ -59,9 +61,39 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
             return None
 
     @staticmethod
-    def get_char_names(script_info: dict) -> np.array:
-        pass
+    def get_char_names(text: BeautifulSoup) -> np.array:
+        #get initial values
+        bolds = text.find_all('b')
+        char = []
+        remove = []
 
+        #append likely names to char
+        for bold in bolds:
+            string = re.sub(r'\r\n', '', bold.text)
+            string = re.sub(r'\s+', ' ', string)
+            string = re.sub('[0-9]', '', string)
+            string = string.strip()
+            if string != ' ' and string != '' and string != 'Writers' and string != 'Genres' and not '.' in string and not '?' in string and not '(' in string and not ')' in string and not '#' in string and not '-' in string and not ':' in string and not '/' in string and not '!' in string:
+                strArray = string.split()
+                if len(strArray) < 3:
+                    char.append(string)
+
+        #Remove duplicates
+        char_names = np.unique(char)
+        for i in range(char_names.shape[0]):
+            for j in range(i+1,char_names.shape[0]):
+                if char_names[i] in char_names[j]:
+                    remove.append(j)
+        char_names = np.delete(char_names, remove)
+
+        #nltk labeling (not working)
+        #for name in char_names:
+        #    for chunk in nltk.chunk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(name))):
+        #        if hasattr(chunk,'label'):
+        #            print(chunk[0][0], chunk.label())
+                    
+
+        return char_names
     @staticmethod
     def get_char_text(script_info: dict, char: str):
         text = script_info["script_soup"]
@@ -118,10 +150,12 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
 
 
 if __name__ == "__main__":
-    # response = requests.get('https://imsdb.com/all-scripts.html')
-    # html = response.text
-    #
-    # soup = BeautifulSoup(html, "html.parser")
+    response = requests.get('https://imsdb.com/scripts/10-Things-I-Hate-About-You.html')
+    html = response.text
+    
+    soup = BeautifulSoup(html, "html.parser")
+    names = IMSDBScrapeScripts.get_char_names(soup)
+    print(names)
     # paragraphs = soup.find_all('p')
     #
     # for p in paragraphs:
