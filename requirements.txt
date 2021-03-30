@@ -13,3 +13,4 @@ nltk~=3.5
 beautifulsoup4~=4.9.3
 WTForms~=2.3.3
 Pillow~=8.1.0
+selenium~=3.141.0
