@@ -61,8 +61,9 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
             return None
 
     @staticmethod
-    def get_char_names(text: BeautifulSoup) -> np.array:
+    def get_char_names(script_info: dict) -> np.array:
         #get initial values
+        text = script_info["script_soup"]
         bolds = text.find_all('b')
         char = []
         remove = []
@@ -94,6 +95,7 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
                     
 
         return char_names
+
     @staticmethod
     def get_char_text(script_info: dict, char: str):
         text = script_info["script_soup"]
@@ -150,12 +152,10 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
 
 
 if __name__ == "__main__":
-    response = requests.get('https://imsdb.com/scripts/10-Things-I-Hate-About-You.html')
-    html = response.text
-    
-    soup = BeautifulSoup(html, "html.parser")
-    names = IMSDBScrapeScripts.get_char_names(soup)
-    print(names)
+    # response = requests.get('https://imsdb.com/scripts/10-Things-I-Hate-About-You.html')
+    # html = response.text
+    #
+    # soup = BeautifulSoup(html, "html.parser")
     # paragraphs = soup.find_all('p')
     #
     # for p in paragraphs:
