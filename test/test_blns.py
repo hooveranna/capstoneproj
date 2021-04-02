@@ -9,7 +9,7 @@ def test_blns1():
         this_dict = nlu.get_personality('False')
         assert this_dict
 
-def test_blns1():
+def test_blns2():
     with pytest.raises(Exception):
         nlu = NLUPersonalityInterface()
         this_dict = nlu.get_personality('FALSE')
