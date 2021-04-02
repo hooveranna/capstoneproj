@@ -10,4 +10,5 @@ install:
   - python3 -c "import nltk; nltk.download('punkt'); nltk.download('maxent_ne_chunker'); nltk.download('words');nltk.download('averaged_perceptron_tagger');"
 # command to run tests
 script:
-    - python3 -m pytest
+    - python3 -m pytest test/test_personality_scrape.py
+    - python3 -m pytest test/test_blns.py
