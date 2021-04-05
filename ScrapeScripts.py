@@ -1,11 +1,16 @@
+import sys
+
 import numpy as np
 import re
-import spacy
 import nltk
 from urllib.parse import quote
 
 from bs4 import BeautifulSoup, NavigableString
 import requests
+from ibm_cloud_sdk_core import ApiException
+
+from StoreChars import DiscoveryCharDatabase
+from TextPersonality import NLUPersonalityInterface
 
 
 class ScrapeScriptsInterface:
@@ -92,7 +97,6 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
         #    for chunk in nltk.chunk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(name))):
         #        if hasattr(chunk,'label'):
         #            print(chunk[0][0], chunk.label())
-                    
 
         return char_names
 
@@ -152,22 +156,48 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
 
 
 if __name__ == "__main__":
-    # response = requests.get('https://imsdb.com/scripts/10-Things-I-Hate-About-You.html')
-    # html = response.text
-    #
-    # soup = BeautifulSoup(html, "html.parser")
-    # paragraphs = soup.find_all('p')
-    #
-    # for p in paragraphs:
-    #     relative_link = p.a['href']
-    #     print(relative_link)
-    #     title, script = get_script(relative_link)
-    #     if not script:
-    #         continue
+    ddb = DiscoveryCharDatabase("Collection 2")
+    nlu = NLUPersonalityInterface()
+    # print(ddb.reset_db("Collection 2"))
+    response = requests.get('https://imsdb.com/all-scripts.html')
+    html = response.text
+
+    soup = BeautifulSoup(html, "html.parser")
+    paragraphs = soup.find_all('p')
+
+    for p in paragraphs:
+        relative_link = p.a['href']
+        # print(relative_link)
+        # title, script = get_script(relative_link)
+        test_script_info = {"relative_link": relative_link}
+        test_text = IMSDBScrapeScripts.get_text(test_script_info)
+        if not test_text:
+            continue
+        # print(test_text["script_soup"].get_text())
+        test_title = IMSDBScrapeScripts.get_title(test_script_info)
+        # print(test_title)
+        test_names = IMSDBScrapeScripts.get_char_names(test_text)
+        for name in test_names:
+            test_char_text = IMSDBScrapeScripts.get_char_text(test_text, name)
+            # print(test_char_text)
+            char_sents = ''.join(test_char_text)
+            if char_sents:
+                print(name)
+                try:
+                    char_personality = nlu.get_personality(char_sents)
+                    full_dict = dict(char_personality[0])
+                    full_dict.update(char_personality[1])
+                    full_dict["title"] = test_title
+                    full_dict["sentences"] = test_char_text
+                    print(full_dict)
+                    # ddb.add_char(name, full_dict)
+                except ApiException:
+                    print("IBM Api Exception:", sys.exc_info()[1])
+
     #
     #     with open(os.path.join(SCRIPTS_DIR, title.strip('.html') + '.txt'), 'w', encoding='utf-8') as outfile:
     #         outfile.write(script)
-    test_script_info = {"relative_link": "/Movie Scripts/10 Things I Hate About You Script.html"}
+    # test_script_info = {"relative_link": "/Movie Scripts/10 Things I Hate About You Script.html"}
     # test_text = IMSDBScrapeScripts.get_text(test_script_info)
     # print(test_text["script_soup"].get_text())
     # test_title = IMSDBScrapeScripts.get_title(test_script_info)
