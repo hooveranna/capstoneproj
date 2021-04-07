@@ -42,7 +42,7 @@ def submit(username, usertext):
         return render_template('error.html', error=e.message)
     create_figure(this_dict[0], file_name)
     # create_figure(this_dict[1], file_name2)
-    ddb = DiscoveryCharDatabase("Collection 1")
+    ddb = DiscoveryCharDatabase("Collection 2")
     full_dict = dict(this_dict[0])
     full_dict.update(this_dict[1])
     char_match, personality = ddb.search_char(full_dict)

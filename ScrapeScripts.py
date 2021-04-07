@@ -106,7 +106,7 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
         bolds = text.find_all('b')
         char_text = []
         for bold in bolds:
-            if bold.get_text(strip=True) == char:
+            if char in bold.get_text(strip=True):
                 char_str = bold.next_sibling
                 if isinstance(char_str, NavigableString):
                     char_str = char_str.strip()
@@ -159,14 +159,18 @@ if __name__ == "__main__":
     ddb = DiscoveryCharDatabase("Collection 2")
     nlu = NLUPersonalityInterface()
     # print(ddb.reset_db("Collection 2"))
-    response = requests.get('https://imsdb.com/all-scripts.html')
-    html = response.text
+    # response = requests.get('https://imsdb.com/all-scripts.html')
+    # html = response.text
+    #
+    # soup = BeautifulSoup(html, "html.parser")
+    # paragraphs = soup.find_all('p')
 
-    soup = BeautifulSoup(html, "html.parser")
-    paragraphs = soup.find_all('p')
+    scrape_scripts = {"/Movie%20Scripts/Zootopia%20Script.html", "/Movie%20Scripts/Shrek%20Script.html", "/Movie%20Scripts/How%20to%20Train%20Your%20Dragon%20Script.html", "/Movie%20Scripts/Coco%20Script.html", "/Movie%20Scripts/Happy%20Feet%20Script.html", "/Movie%20Scripts/Kung%20Fu%20Panda%20Script.html", "/Movie%20Scripts/Frozen%20(Disney)%20Script.html", "/Movie%20Scripts/Blade%20Runner%20Script.html", "/Movie%20Scripts/Lord%20of%20the%20Rings:%20Fellowship%20of%20the%20Ring,%20The%20Script.html", "/Movie%20Scripts/X-Men%20Origins:%20Wolverine%20Script.html", "/Movie%20Scripts/Wonder%20Woman%20Script.html", "/Movie%20Scripts/Thor%20Script.html", "/Movie%20Scripts/Citizen%20Kane%20Script.html", "/Movie%20Scripts/Titanic%20Script", "/Movie%20Scripts/La%20La%20Land%20Script.html", "/Movie%20Scripts/Jurassic%20Park%20Script.html", "/Movie%20Scripts/Star%20Wars:%20A%20New%20Hope%20Script.html", "/Movie%20Scripts/Legally%20Blonde%20Script.html", "/Movie%20Scripts/Star%20Trek%20Script.html", "/Movie%20Scripts/Spider-Man%20Script.html"}
 
-    for p in paragraphs:
-        relative_link = p.a['href']
+    # for p in paragraphs:
+    for script in scrape_scripts:
+        # relative_link = p.a['href']
+        relative_link = script.replace("%20", " ")
         # print(relative_link)
         # title, script = get_script(relative_link)
         test_script_info = {"relative_link": relative_link}
@@ -197,9 +201,9 @@ if __name__ == "__main__":
     #
     #     with open(os.path.join(SCRIPTS_DIR, title.strip('.html') + '.txt'), 'w', encoding='utf-8') as outfile:
     #         outfile.write(script)
-    # test_script_info = {"relative_link": "/Movie Scripts/10 Things I Hate About You Script.html"}
+    # test_script_info = {"relative_link": "/Movie Scripts/Frozen (Disney) Script.html"}
     # test_text = IMSDBScrapeScripts.get_text(test_script_info)
     # print(test_text["script_soup"].get_text())
     # test_title = IMSDBScrapeScripts.get_title(test_script_info)
     # print(test_title)
-    # print(IMSDBScrapeScripts.get_char_text(test_text, "BIANCA"))
+    # print(IMSDBScrapeScripts.get_char_text(test_text, "ANNA"))
