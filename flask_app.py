@@ -202,5 +202,5 @@ def get_emotions_from_dict(personality):
     return emotions_dict, personality
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     app.run()
