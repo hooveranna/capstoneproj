@@ -2,18 +2,64 @@
 from flask import Flask
 from flask import render_template
 from flask import (
-    redirect, request, url_for
+    redirect, request, url_for, request, session, flash
 )
 from TextPersonality import NLUPersonalityInterface
 from StoreChars import DiscoveryCharDatabase, get_emotions_from_dict
 from werkzeug.exceptions import InternalServerError
 from chart import create_figure
 import random
+from forms import RegistrationForm, LoginForm, UpdateAccountForm
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+from flask_login import UserMixin
+from flask_login import login_user,current_user, logout_user, login_required
+from forms import RegistrationForm, LoginForm, UpdateAccountForm
+from datetime import datetime
+import secrets
+import os
+from PIL import Image
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
-
+app.config['SECRET_KEY'] = 'my precious'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']= False
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 # run_with_ngrok(app)   # starts ngrok when the app is run
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    password = db.Column(db.String(60), nullable=False)
+    texts = db.relationship('Text', backref='author', lazy=True) # can user text.author to get user info
+
+    def __repr__(self):
+        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+
+class Text(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False) # user input name
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False) #user input text to do analyze
+    character_name = db.Column(db.Text, nullable=False)
+    title = db.Column(db.Text, nullable=False)
+    personality = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f"Text('{self.name}', '{self.date_posted}', '{self.content}','{self.character_name}','{self.title}','{self.personality}', '{self.user_id}')"
 
 
 @app.route("/", methods=('GET', 'POST'))
@@ -42,7 +88,7 @@ def submit(username, usertext):
         return render_template('error.html', error=e.message)
     create_figure(this_dict[0], file_name)
     # create_figure(this_dict[1], file_name2)
-    ddb = DiscoveryCharDatabase("Collection 1")
+    ddb = DiscoveryCharDatabase("Collection 2")
     full_dict = dict(this_dict[0])
     full_dict.update(this_dict[1])
     char_match, personality = ddb.search_char(full_dict)
@@ -58,7 +104,74 @@ def submit(username, usertext):
     emotions, concepts = get_emotions_from_dict(personality)
     create_figure(emotions, file_name3)
     # create_figure(personality, file_name4)
+    if current_user.is_authenticated:
+        text = Text(name=username, content=usertext, character_name=char_match, title=book_title, personality=''.join(personality), user_id=current_user.id)
+        db.session.add(text)
+        db.session.commit()
     return render_template('output.html', username=username, character_name=char_match, file_name=file_name, concepts=this_dict[1].keys(), file_name3=file_name3, char_concepts=personality.keys(), title=book_title, sentences=sentences)
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Your account has been created! You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+         return redirect(url_for('home'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            return redirect(url_for('home'))
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+    return render_template('login.html', title='Login', form=form)
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+
+    output_size = (125, 125)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+
+    return picture_fn
+
+@app.route("/account", methods=['GET', 'POST'])
+@login_required
+def account():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            current_user.image_file = picture_file
+            db.session.commit()
+            flash('Your account has been updated!', 'success')
+            return redirect(url_for('account'))
+    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+    texts = Text.query.filter_by(user_id = current_user.id).all()
+    return render_template('account.html', title='Account',
+                           image_file=image_file, form=form, texts=texts)
 
 
 @app.route("/about-us")
@@ -78,4 +191,16 @@ def handle_500(e):
     return render_template("500_unhandled.html", e=original), 500
 
 
-app.run()
+
+def get_emotions_from_dict(personality):
+    emotions_dict = dict()
+    emotions_dict["disgust"] = personality.pop("disgust", 0)
+    emotions_dict["joy"] = personality.pop("joy", 0)
+    emotions_dict["anger"] = personality.pop("anger", 0)
+    emotions_dict["sadness"] = personality.pop("sadness", 0)
+    emotions_dict["fear"] = personality.pop("fear", 0)
+    return emotions_dict, personality
+
+
+if __name__ == "__main__":
+    app.run()
