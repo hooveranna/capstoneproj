@@ -86,7 +86,8 @@ def submit(username, usertext):
         this_dict = nlu.get_personality(usertext)
     except Exception as e: 
         return render_template('error.html', error=e.message)
-    create_figure(this_dict[0], file_name)
+    user_emotions, _ = get_emotions_from_dict(this_dict[0])
+    create_figure(user_emotions, file_name)
     # create_figure(this_dict[1], file_name2)
     ddb = DiscoveryCharDatabase("Collection 2")
     full_dict = dict(this_dict[0])
