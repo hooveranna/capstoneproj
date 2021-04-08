@@ -201,5 +201,6 @@ def get_emotions_from_dict(personality):
     emotions_dict["fear"] = personality.pop("fear", 0)
     return emotions_dict, personality
 
-app.run()
 
+if __name__ == "main":
+    app.run()

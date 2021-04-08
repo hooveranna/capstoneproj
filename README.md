@@ -12,3 +12,13 @@ Need to install packages:
 * plotly
 * kaleido
 * beautiful soup
+* Pillow
+* WTForms
+* flask_sqlalchemy
+* flask_bcrypt
+* flask_login
+* flask_wtf
+
+To initialize database, run in console:
+from flask_app import db
+db.create_all()
