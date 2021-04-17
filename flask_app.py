@@ -65,8 +65,8 @@ class Text(db.Model):
 @app.route("/", methods=('GET', 'POST'))
 def home(name=None):
     if request.method == 'POST':
-        username = request.form['name']
-        usertext = request.form['usertext']
+        username = request.form['char_name']
+        usertext = request.form['movie_name']
         notAllowed = ['\\','/','=','+','_','{','[',']','}','|','<','>']
         for e in notAllowed:
             if e in usertext:

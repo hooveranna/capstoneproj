@@ -1,29 +1,20 @@
 {% extends 'base.html' %}
 {% block header %}
-  <h1>{% block title %}Home{% endblock %}</h1>
+  <h1>{% block title %}ENTER THE CHARACTER YOU WOULD LIKE TO FIND THE ALTERNATE IDENTITY FOR{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
 <div class="container pt-3">
   <form method="post">
     <div class="form-group">
-      <label for="name">Name: </label>
-      <input name="name" id="name" placeholder="Enter your name" required>
+      <label for="char_name">Charcter Name: </label>
+      <input class="form-control" name="char_name" id="char_name" placeholder="Enter the character name" required>
     </div>
     <div class="form-group">
-      <label for="usertext">Enter Your Text:</label>
-      <textarea class="form-control" name="usertext" id="usertext" rows="5" cols="50" placeholder="Enter the text you would like to match" required></textarea>
+      <label for="movie_name">Movie Name:</label>
+      <input class="form-control" name="movie_name" id="movie_name" placeholder="Enter the movie name" required>
     </div>
-    <!--- haven't inplemented yet
-    <input type="radio" id="similar" name="testType" value="similar" checked>
-    <label for="similar">Most Similar To</label><br>
-    <input type="radio" id="different" name="testType" value="different">
-    <label for="">Most Different From</label><br>
-    <input type="radio" id="friend" name="testType" value="friend">
-    <label for="friend">Most Likely to Become Friends With</label>
-    <br>
-    --->
-    <input id="matchMe" type="submit" class="btn btn-primary btn-lg" value="Match me!" onclick="showLoading();">
+    <input id="matchMe" type="submit" class="btn btn-primary btn-lg" value="Match them!" onclick="showLoading();">
   </form>
   <script type="text/javascript">
 
