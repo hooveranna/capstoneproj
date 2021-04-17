@@ -106,7 +106,7 @@ class IMSDBScrapeScripts(ScrapeScriptsInterface):
         bolds = text.find_all('b')
         char_text = []
         for bold in bolds:
-            if char in bold.get_text(strip=True):
+            if char == bold.get_text(strip=True):
                 char_str = bold.next_sibling
                 if isinstance(char_str, NavigableString):
                     char_str = char_str.strip()
@@ -165,38 +165,42 @@ if __name__ == "__main__":
     # soup = BeautifulSoup(html, "html.parser")
     # paragraphs = soup.find_all('p')
 
-    scrape_scripts = {"/Movie%20Scripts/Zootopia%20Script.html", "/Movie%20Scripts/Shrek%20Script.html", "/Movie%20Scripts/How%20to%20Train%20Your%20Dragon%20Script.html", "/Movie%20Scripts/Coco%20Script.html", "/Movie%20Scripts/Happy%20Feet%20Script.html", "/Movie%20Scripts/Kung%20Fu%20Panda%20Script.html", "/Movie%20Scripts/Frozen%20(Disney)%20Script.html", "/Movie%20Scripts/Blade%20Runner%20Script.html", "/Movie%20Scripts/Lord%20of%20the%20Rings:%20Fellowship%20of%20the%20Ring,%20The%20Script.html", "/Movie%20Scripts/X-Men%20Origins:%20Wolverine%20Script.html", "/Movie%20Scripts/Wonder%20Woman%20Script.html", "/Movie%20Scripts/Thor%20Script.html", "/Movie%20Scripts/Citizen%20Kane%20Script.html", "/Movie%20Scripts/Titanic%20Script", "/Movie%20Scripts/La%20La%20Land%20Script.html", "/Movie%20Scripts/Jurassic%20Park%20Script.html", "/Movie%20Scripts/Star%20Wars:%20A%20New%20Hope%20Script.html", "/Movie%20Scripts/Legally%20Blonde%20Script.html", "/Movie%20Scripts/Star%20Trek%20Script.html", "/Movie%20Scripts/Spider-Man%20Script.html"}
+    scrape_scripts = {"/Movie%20Scripts/Twilight%20Script.html", "/Movie%20Scripts/Toy%20Story%20Script.html", "/Movie%20Scripts/Princess%20Bride,%20The%20Script.html", "/Movie%20Scripts/Psycho%20Script.html", "/Movie%20Scripts/Coraline%20Script.html", "/Movie%20Scripts/Addams%20Family,%20The%20Script.html", "/Movie%20Scripts/Taxi%20Driver%20Script.html", "/Movie%20Scripts/Wolf%20of%20Wall%20Street,%20The%20Script.html", "/Movie%20Scripts/Saw%20Script.html", "/Movie%20Scripts/Mission%20Impossible%20Script.html", "/Movie%20Scripts/Pirates%20of%20the%20Caribbean%20Script.html", "/Movie%20Scripts/Life%20of%20Pi%20Script.html", "/Movie%20Scripts/Ocean's%20Eleven%20Script.html", "/Movie%20Scripts/Despicable%20Me%202%20Script.html", "/Movie%20Scripts/Terminator%20Script.html", "/Movie%20Scripts/Zootopia%20Script.html", "/Movie%20Scripts/Shrek%20Script.html", "/Movie%20Scripts/How%20to%20Train%20Your%20Dragon%20Script.html", "/Movie%20Scripts/Coco%20Script.html", "/Movie%20Scripts/Happy%20Feet%20Script.html", "/Movie%20Scripts/Kung%20Fu%20Panda%20Script.html", "/Movie%20Scripts/Frozen%20(Disney)%20Script.html", "/Movie%20Scripts/Blade%20Runner%20Script.html", "/Movie%20Scripts/Lord%20of%20the%20Rings:%20Fellowship%20of%20the%20Ring,%20The%20Script.html", "/Movie%20Scripts/X-Men%20Origins:%20Wolverine%20Script.html", "/Movie%20Scripts/Wonder%20Woman%20Script.html", "/Movie%20Scripts/Thor%20Script.html", "/Movie%20Scripts/Citizen%20Kane%20Script.html", "/Movie%20Scripts/Titanic%20Script", "/Movie%20Scripts/La%20La%20Land%20Script.html", "/Movie%20Scripts/Jurassic%20Park%20Script.html", "/Movie%20Scripts/Star%20Wars:%20A%20New%20Hope%20Script.html", "/Movie%20Scripts/Legally%20Blonde%20Script.html", "/Movie%20Scripts/Star%20Trek%20Script.html", "/Movie%20Scripts/Spider-Man%20Script.html", "/Movie%20Scripts/Black%20Panther%20Script.html", "/Movie%20Scripts/Avengers,%20The%20(2012)%20Script.html", "/Movie%20Scripts/Avatar%20Script.html", "/Movie%20Scripts/Interstellar%20Script.html", "/Movie%20Scripts/Men%20in%20Black%203%20Script.html", "/Movie%20Scripts/Dark%20Knight%20Rises,%20The%20Script.html", "/Movie%20Scripts/American%20Psycho%20Script.html", "/Movie%20Scripts/V%20for%20Vendetta%20Script.html", }
 
     # for p in paragraphs:
-    for script in scrape_scripts:
-        # relative_link = p.a['href']
-        relative_link = script.replace("%20", " ")
-        # print(relative_link)
-        # title, script = get_script(relative_link)
-        test_script_info = {"relative_link": relative_link}
-        test_text = IMSDBScrapeScripts.get_text(test_script_info)
-        if not test_text:
-            continue
-        # print(test_text["script_soup"].get_text())
-        test_title = IMSDBScrapeScripts.get_title(test_script_info)
-        # print(test_title)
-        test_names = IMSDBScrapeScripts.get_char_names(test_text)
-        for name in test_names:
-            test_char_text = IMSDBScrapeScripts.get_char_text(test_text, name)
-            # print(test_char_text)
-            char_sents = ''.join(test_char_text)
-            if char_sents:
-                print(name)
-                try:
-                    char_personality = nlu.get_personality(char_sents)
-                    full_dict = dict(char_personality[0])
-                    full_dict.update(char_personality[1])
-                    full_dict["title"] = test_title
-                    full_dict["sentences"] = test_char_text
-                    print(full_dict)
-                    # ddb.add_char(name, full_dict)
-                except ApiException:
-                    print("IBM Api Exception:", sys.exc_info()[1])
+    with open('all_chars.txt', 'w') as fp:
+        for script in scrape_scripts:
+            # relative_link = p.a['href']
+            relative_link = script.replace("%20", " ")
+            # print(relative_link)
+            # title, script = get_script(relative_link)
+            test_script_info = {"relative_link": relative_link}
+            test_text = IMSDBScrapeScripts.get_text(test_script_info)
+            if not test_text:
+                continue
+            # print(test_text["script_soup"].get_text())
+            test_title = IMSDBScrapeScripts.get_title(test_script_info)
+            # print(test_title)
+            test_names = IMSDBScrapeScripts.get_char_names(test_text)
+            for name in test_names:
+                test_char_text = IMSDBScrapeScripts.get_char_text(test_text, name)
+                # print(test_char_text)
+                if len(test_char_text) > 10:
+                    char_sents = ''.join(test_char_text)
+                    if char_sents:
+                        print(name)
+                        # fp.write(name +" from " + test_title + "\n")
+                        try:
+                            char_personality = nlu.get_personality(char_sents)
+                            full_dict = dict(char_personality[0])
+                            full_dict.update(char_personality[1])
+                            full_dict["title"] = test_title
+                            full_dict["sentences"] = test_char_text
+                            full_dict["char_name"] = name
+                            print(full_dict)
+                            # ddb.add_char(name, full_dict)
+                        except ApiException:
+                            print("IBM Api Exception:", sys.exc_info()[1])
 
     #
     #     with open(os.path.join(SCRIPTS_DIR, title.strip('.html') + '.txt'), 'w', encoding='utf-8') as outfile:
