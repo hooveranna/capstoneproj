@@ -67,7 +67,7 @@ def home(name=None):
     if request.method == 'POST':
         username = request.form['name']
         usertext = request.form['usertext']
-        notAllowed = ['\\','/','=','+','-','_','{','[',']','}','|','<','>']
+        notAllowed = ['\\','/','=','+','_','{','[',']','}','|','<','>']
         for e in notAllowed:
             if e in usertext:
                 return render_template('invalid_char.html', error=e)
@@ -86,7 +86,8 @@ def submit(username, usertext):
         this_dict = nlu.get_personality(usertext)
     except Exception as e: 
         return render_template('error.html', error=e.message)
-    create_figure(this_dict[0], file_name)
+    user_emotions, _ = get_emotions_from_dict(this_dict[0])
+    create_figure(user_emotions, file_name)
     # create_figure(this_dict[1], file_name2)
     ddb = DiscoveryCharDatabase("Collection 2")
     full_dict = dict(this_dict[0])
@@ -101,6 +102,7 @@ def submit(username, usertext):
     else:
         sentences = []
     book_title = personality.pop("title", "Unknown")
+    personality.pop("char_name", "Unknown")
     emotions, concepts = get_emotions_from_dict(personality)
     create_figure(emotions, file_name3)
     # create_figure(personality, file_name4)
