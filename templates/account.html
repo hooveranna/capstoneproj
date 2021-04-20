@@ -34,11 +34,11 @@
             {{ text.date_posted.strftime('%Y-%m-%d') }}
           </div>
           <div class="card-body">
-            <h5 class="card-title">Name: {{ text.name }}</h5>
-            <p class="card-text">{{ text.content }}</p>
+            <h5 class="card-title">Character Name: {{ text.name }}</h5>
+            <p class="card-text">Movie Name: {{ text.content }}</p>
              <p class="card-text">Matched With: {{ text.character_name }}
                  {% if text.personality %}
-                 from the novel <i>{{text.title}} </i>
+                 from the movie <i>{{text.title}} </i>
                  {% endif %}
              </p>
           </div>
