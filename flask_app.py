@@ -81,17 +81,13 @@ def submit(username, usertext):
     # file_name2 = "test_file2.jpeg"
     file_name3 = "character_emotions.jpeg"
     # file_name4 = "character_concept.jpeg"
-    nlu = NLUPersonalityInterface()
-    try:
-        this_dict = nlu.get_personality(usertext)
-    except Exception as e: 
-        return render_template('error.html', error=e.message)
-    user_emotions, _ = get_emotions_from_dict(this_dict[0])
+    ddb = DiscoveryCharDatabase("Collection 2")
+    full_dict =  ddb.find_char(username,usertext)
+    if full_dict == "Not in database":
+        return render_template("error.html", error="Character not in Database")
+    user_emotions, _ = get_emotions_from_dict(full_dict)
     create_figure(user_emotions, file_name)
     # create_figure(this_dict[1], file_name2)
-    ddb = DiscoveryCharDatabase("Collection 2")
-    full_dict = dict(this_dict[0])
-    full_dict.update(this_dict[1])
     char_match, personality = ddb.search_char(full_dict)
     if personality:
         sentences = personality.pop("sentences")
@@ -110,7 +106,7 @@ def submit(username, usertext):
         text = Text(name=username, content=usertext, character_name=char_match, title=book_title, personality=''.join(personality), user_id=current_user.id)
         db.session.add(text)
         db.session.commit()
-    return render_template('output.html', username=username, character_name=char_match, file_name=file_name, concepts=this_dict[1].keys(), file_name3=file_name3, char_concepts=personality.keys(), title=book_title, sentences=sentences)
+    return render_template('output.html', username=username, character_name=char_match, file_name=file_name, concepts=full_dict.keys(), file_name3=file_name3, char_concepts=personality.keys(), title=book_title, sentences=sentences)
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
