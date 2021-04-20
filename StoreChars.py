@@ -132,7 +132,7 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
             if query_str:
                 query_str += ' | '
             value = emotions_dict[emotion]
-            query_str += f'({emotion}<={value + self.conf_interval}, {emotion}>={max(value - self.conf_interval, 0.0001)})'
+            query_str += f'({emotion}<={value + self.conf_interval}, {emotion}>={max(value - self.conf_interval, 0.01)})'
 
         for concept in personality_dict:
             if query_str:
