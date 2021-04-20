@@ -113,7 +113,7 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
         ).get_result()
         #print(query_results)
         if not query_results["results"]:
-            return "You are completely unique! There is no one else like you!", dict()
+            return "Not in database"
         book_result = query_results["results"][0]
         char_name = book_result.pop("extracted_metadata", None)["filename"]
         book_result.pop("id", None)

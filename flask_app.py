@@ -83,6 +83,8 @@ def submit(username, usertext):
     # file_name4 = "character_concept.jpeg"
     ddb = DiscoveryCharDatabase("Collection 2")
     full_dict =  ddb.find_char(username,usertext)
+    if full_dict == "Not in database":
+        return render_template("error.html", error="Character not in Database")
     user_emotions, _ = get_emotions_from_dict(full_dict)
     create_figure(user_emotions, file_name)
     # create_figure(this_dict[1], file_name2)
