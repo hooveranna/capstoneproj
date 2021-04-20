@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="text-center">
-    <h1>Based on your text, you, {{username}}, have been matched with ....</h1>
+    <h1>The character you entered, {{username}}, is secretly ....</h1>
     <h1>{{character_name}}!!!</h1>
     {% if sentences %}
     <h2>from the movie <i>{{title}}</i></h2>
@@ -14,7 +14,7 @@
 </div>
 {% if concepts %}
 <div>
-    You had these concepts in your text:
+    {{username}} had these concepts in their text:
     <ul>
         {% for concept in concepts %}
         <li>{{concept.replace("_"," ")}}</li>
@@ -24,7 +24,7 @@
 {% endif %}
 {% if char_concepts %}
 <div>
-    The character you matched with had these concepts in their text:
+    {{character_name}} had these concepts in their text:
     <ul>
         {% for concept in char_concepts %}
         <li>{{concept.replace("_"," ")}}</li>
@@ -45,14 +45,14 @@
 <div class="row">
     <div class="col card">
         <div class="card-body">
-            <h4 class="card-title">Your Emotions Chart</h4>
+            <h4 class="card-title">{{username}} Emotions Chart</h4>
         </div>
         <img class="card-img-bottom" src="{{url_for('static',filename=file_name)}}" alt="Your Emotions chart image">
     </div>
     {% if sentences %}
     <div class="col card">
         <div class="card-body">
-            <h4 class="card-title">Character's Emotions Chart</h4>
+            <h4 class="card-title">{{character_name}}'s Emotions Chart</h4>
         </div>
         <img class="card-img-bottom" src="{{url_for('static',filename=file_name3)}}" alt="Character's Emotions chart image">
     </div>
