@@ -14,6 +14,10 @@ class CharDatabaseInterface:
         """ Searches for character closest to passed in info and returns character name and personality fields """
         pass
 
+    def find_char(self, name: str):
+        """ Searches for character closest to passed in info and returns character name and personality fields """
+        pass
+
 
 class DiscoveryCharDatabase(CharDatabaseInterface):
     api_key = 'hCH8RRcfJEQUE6Ve8gCl_gsXKqM7Mkdusc6Mdnchb51s'
@@ -86,7 +90,8 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
         query_results = self.discovery.query(
             environment_id=self.environment_id,
             collection_id=self.collection_id,
-            query=query_string
+            query=query_string,
+            offset=1
         ).get_result()
         # print(query_results)
         if not query_results["results"]:
@@ -97,6 +102,27 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
         book_result.pop("result_metadata", None)
         # print(book_result)
         return char_name, book_result
+
+    def find_char(self, name: str, movie:str):
+        char_name = "char_name: " + name + ", title: " + movie
+        query_results = self.discovery.query(
+            environment_id=self.environment_id,
+            collection_id=self.collection_id,
+            count=1,
+            filter=char_name
+        ).get_result()
+        #print(query_results)
+        if not query_results["results"]:
+            return "Not in database"
+        book_result = query_results["results"][0]
+        char_name = book_result.pop("extracted_metadata", None)["filename"]
+        book_result.pop("id", None)
+        book_result.pop("result_metadata", None)
+        book_result.pop("title", None)
+        book_result.pop("char_name", None)
+        book_result.pop("sentences", None)
+        # print(book_result)
+        return book_result
 
     def convert_to_discovery_query_str(self, query_dict: dict):
         query_str = ''
