@@ -12,3 +12,6 @@ Need to install packages:
 * plotly
 * kaleido
 * beautiful soup
+* selenium
+
+For selenium tests, download the chromedriver: https://sites.google.com/a/chromium.org/chromedriver/downloads, and change the excutable path when running the test.
