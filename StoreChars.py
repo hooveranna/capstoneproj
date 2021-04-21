@@ -10,7 +10,7 @@ class CharDatabaseInterface:
         """ Adds character info to database"""
         pass
 
-    def search_char(self, char_info: dict) -> (str, dict):
+    def search_char(self, char_info: dict, name: str) -> (str, dict):
         """ Searches for character closest to passed in info and returns character name and personality fields """
         pass
 
@@ -83,7 +83,7 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
             )
         return response
 
-    def search_char(self, char_personality: dict) -> str:
+    def search_char(self, char_personality: dict, username: str) -> str:
         # convert dict to a general query string
         query_string = self.convert_to_discovery_query_str(char_personality)
         # print(query_string)
@@ -91,12 +91,18 @@ class DiscoveryCharDatabase(CharDatabaseInterface):
             environment_id=self.environment_id,
             collection_id=self.collection_id,
             query=query_string,
-            offset=1
+            count=2
         ).get_result()
         # print(query_results)
         if not query_results["results"]:
             return "No one! There is no one else like them!", dict()
-        book_result = query_results["results"][0]
+        elif len(query_results["results"]) == 1 and query_results["results"][0]["char_name"] == username:
+            return "No one! There is no one else like them!", dict()
+        elif query_results["results"][0]["char_name"] != username:
+            query_results["results"] = query_results["results"][0]
+        else:
+            query_results["results"] = query_results["results"][1]
+        book_result = query_results["results"]
         char_name = book_result.pop("extracted_metadata", None)["filename"]
         book_result.pop("id", None)
         book_result.pop("result_metadata", None)

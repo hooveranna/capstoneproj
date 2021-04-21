@@ -88,7 +88,7 @@ def submit(username, usertext):
     user_emotions, _ = get_emotions_from_dict(full_dict)
     create_figure(user_emotions, file_name)
     # create_figure(this_dict[1], file_name2)
-    char_match, personality = ddb.search_char(full_dict)
+    char_match, personality = ddb.search_char(full_dict,username.upper())
     if personality:
         sentences = personality.pop("sentences")
         if len(sentences) < 3:
